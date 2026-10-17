@@ -1,0 +1,6 @@
+{
+  "name": "Millen Woods Mariners Math & World Explorer Quest",
+  "description": "Grade 4 Ontario math adventure and world discovery quest custom-crafted with love by Yang & Melody for Millen Woods Public School students, featuring WRDSB 40-week curriculum, secret clues, treasure chests, and country fun facts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

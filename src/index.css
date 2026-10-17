@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #fbf9f4;
+    color: #0f172a;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, .font-comic {
+    font-family: 'Fredoka', cursive, sans-serif;
+  }
+}
+
+/* Graphic Novel Halftone & Comic Paper Patterns */
+.bg-halftone {
+  background-color: #faf7f2;
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+  background-size: 16px 16px;
+}
+
+.bg-halftone-blue {
+  background-color: #eff6ff;
+  background-image: radial-gradient(#93c5fd 1.3px, transparent 1.3px);
+  background-size: 14px 14px;
+}
+
+.bg-halftone-gold {
+  background-color: #fffbeb;
+  background-image: radial-gradient(#fcd34d 1.3px, transparent 1.3px);
+  background-size: 14px 14px;
+}
+
+/* Comic ink border & offset shadows */
+.comic-box {
+  border: 2.5px solid #0f172a;
+  box-shadow: 4px 4px 0px #0f172a;
+}
+
+.comic-box-sm {
+  border: 2px solid #0f172a;
+  box-shadow: 2px 2px 0px #0f172a;
+}
+
+.comic-box-lg {
+  border: 3px solid #0f172a;
+  box-shadow: 6px 6px 0px #0f172a;
+}
+
+/* 3D Pressable Comic Buttons */
+.comic-btn {
+  border: 2.5px solid #0f172a;
+  box-shadow: 4px 4px 0px #0f172a;
+  transition: all 0.1s ease-in-out;
+}
+
+.comic-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px #0f172a;
+}
+
+.comic-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #0f172a;
+}
+
+/* Grid paper for math scratchpad */
+.bg-grid-math {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.25) 1px, transparent 1px);
+}
+
+.bg-dot-math {
+  background-size: 20px 20px;
+  background-image: radial-gradient(circle, rgba(100, 116, 139, 0.35) 1.5px, transparent 1.5px);
+}
