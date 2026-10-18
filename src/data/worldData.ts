@@ -118,10 +118,10 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "The Kingfisher bird"
       ],
       "optionsZh": [
-        "游隼（猎鹰）",
+        "游隼",
         "大雕鸮",
         "帝企鹅",
-        "翠鸟（Kingfisher）"
+        "翠鸟"
       ],
       "correctIndex": 3,
       "explanationEn": "Eiji Nakatsu, a train engineer and birdwatcher, modeled the nose after the kingfisher diving into water without splashing!",
@@ -154,7 +154,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
       "optionsZh": [
         "完美球体",
         "扁平三棱柱",
-        "正方体（Cubes）",
+        "正方体",
         "细长圆柱体"
       ],
       "correctIndex": 2,
@@ -186,8 +186,8 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "The Red Fox"
       ],
       "optionsZh": [
-        "金雕（老鹰）",
-        "独角兽（Unicorn）",
+        "金雕",
+        "独角兽",
         "苏格兰高地牛",
         "红狐狸"
       ],
@@ -257,7 +257,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "蜜蜂",
         "工蚁",
         "七星瓢虫",
-        "蚊子（Mosquitoes）"
+        "蚊子"
       ],
       "correctIndex": 3,
       "explanationEn": "Iceland’s oceanic climate undergoes multiple rapid freeze-thaw cycles that break the mosquito breeding cycle completely.",
@@ -323,7 +323,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
       ],
       "optionsZh": [
         "大约 1 万头",
-        "超过 150 万头（巨量种群）",
+        "超过 150 万头",
         "大约 5 万头",
         "恰好 500 头"
       ],
@@ -356,7 +356,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "Pitch Black"
       ],
       "optionsZh": [
-        "天然粉红色（Pink）",
+        "天然粉红色",
         "明亮柠檬黄",
         "翠绿翡翠色",
         "纯黑色"
@@ -458,9 +458,9 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "Pine resin glue"
       ],
       "optionsZh": [
-        "厚泥土与干稻草拌成水泥",
-        "极致精密的榫卯无浆切削（Zero mortar）",
-        "将滚烫融化的黄金浇筑在石缝中",
+        "厚泥土与干稻草泥浆",
+        "严丝合缝的精密切削石块",
+        "浇筑融化黄金的石缝",
         "天然松树树脂粘合"
       ],
       "correctIndex": 1,
@@ -492,7 +492,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "The protractor"
       ],
       "optionsZh": [
-        "数字“0”（零）的概念与运算",
+        "数字“0”的独立概念与运算法则",
         "公制千克标准",
         "微积分导数",
         "量角器几何刻度"
@@ -529,7 +529,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
         "全球面积最大的自然森林",
         "唯一拥有野生北极熊的地区",
         "北美洲海拔最高的山峰所在地",
-        "世界上第一个国家公园（World’s 1st National Park）"
+        "世界上第一个国家公园"
       ],
       "correctIndex": 3,
       "explanationEn": "Yellowstone was founded in 1872 as the world’s pioneer national park to preserve geothermal wonders and wildlife.",
@@ -562,7 +562,7 @@ export const WORLD_COUNTRIES: WorldCountry[] = [
       "optionsZh": [
         "因为其沿海全被黄沙覆盖",
         "因为没有任何生命能在那里生存",
-        "因为其年降水量极低极度干燥（Almost zero precipitation）",
+        "因为其年降水量极低、极其干燥",
         "因为所有的极地植物都是仙人掌"
       ],
       "correctIndex": 2,

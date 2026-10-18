@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
-import { Volume2, VolumeX, Award, ArrowLeft, ArrowRight, CheckCircle2, XCircle, Sparkles, Globe, Compass } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, Globe, Compass, ArrowLeft, ArrowRight, CheckCircle2, XCircle, Award, BookOpen, Target } from 'lucide-react';
 import { WorldCountry, WORLD_COUNTRIES } from '../data/worldData';
 import { COUNTRY_LANDMARKS } from '../data/landmarkData';
 import { CountryIllustration } from './CountryIllustration';
@@ -20,7 +20,8 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   unlockedBadges,
   onUnlockBadge,
 }) => {
-  const [viewMode, setViewMode] = useState<'globe' | 'card'>('globe');
+  // Main view mode: 'globe' (3D Interactive Earth) vs 'fact' (Focused Kid-Friendly Fun Fact & Quiz)
+  const [viewMode, setViewMode] = useState<'globe' | 'fact'>('globe');
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [activeTab, setActiveTab] = useState<'fact' | 'quiz'>('fact');
   const [selectedOpt, setSelectedOpt] = useState<number | null>(null);
@@ -29,12 +30,30 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
-  const filteredCountries = categoryFilter === 'All'
-    ? WORLD_COUNTRIES
-    : WORLD_COUNTRIES.filter(c => c.category === categoryFilter);
+  const filteredCountries = useMemo(() => {
+    return categoryFilter === 'All'
+      ? WORLD_COUNTRIES
+      : WORLD_COUNTRIES.filter(c => c.category === categoryFilter);
+  }, [categoryFilter]);
 
   const currentCountry = filteredCountries[selectedIdx] || filteredCountries[0];
   const isBadgeUnlocked = unlockedBadges.includes(currentCountry.id);
+  const currentLandmark = COUNTRY_LANDMARKS[currentCountry.id];
+
+  // Dynamic shuffle for trivia options so answers are randomly balanced across A, B, C, D
+  const quizData = useMemo(() => {
+    const q = currentCountry.quiz;
+    const indices = q.optionsEn.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    return {
+      optionsEn: indices.map(i => q.optionsEn[i]),
+      optionsZh: indices.map(i => q.optionsZh[i]),
+      correctIndex: indices.indexOf(q.correctIndex),
+    };
+  }, [currentCountry]);
 
   const handleSpeak = (text: string) => {
     if (isSpeaking) {
@@ -77,7 +96,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   const handleCheckQuiz = () => {
     if (selectedOpt === null) return;
 
-    if (selectedOpt === currentCountry.quiz.correctIndex) {
+    if (selectedOpt === quizData.correctIndex) {
       setIsCorrect(true);
       setIsAnswered(true);
       if (soundEnabled) playCorrectSound();
@@ -102,492 +121,453 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* Passport Header Bar */}
-      <div className="bg-white comic-box-lg rounded-3xl p-6 md:p-8 mb-6 bg-halftone-gold relative overflow-hidden">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <span className="text-2xl">🌍</span>
-              <span className="font-comic text-xs font-bold uppercase tracking-wider text-amber-800">
-                World Explorer Passport · 16 Nations
-              </span>
-              <span className="bg-amber-200/90 border border-amber-400 text-amber-950 px-2 py-0.5 rounded-lg text-[10px] font-comic font-bold">
-                👨‍👩‍👧 Curated by Yang &amp; Melody
-              </span>
-            </div>
-            <h1 className="font-comic text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
-              {lang === 'zh' ? '水手世界探索家护照' : 'Mariner World Explorer Passport'}
-            </h1>
-            <p className="text-xs md:text-sm text-slate-600 font-medium">
-              {lang === 'zh'
-                ? '一页一个神奇冷知识！完成趣味有奖问答，集齐全套 16 国探索勋章！'
-                : 'One bite-sized fun fact per page! Test your knowledge in trivia quizzes to earn official badges!'}
-            </p>
-          </div>
-
-          {/* Badges collected counter */}
-          <div className="bg-white comic-box rounded-2xl p-4 flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center text-xl shadow-sm">
-              🎖️
-            </div>
+      {/* =========================================================================
+          MODE 1: 3D EARTH GLOBE STAGE (Full focus on 3D, zero text clutter)
+          ========================================================================= */}
+      {viewMode === 'globe' ? (
+        <div className="animate-in fade-in duration-200">
+          {/* Friendly Minimalist Top Bar */}
+          <div className="bg-white comic-box-lg rounded-3xl p-5 md:p-6 mb-5 bg-halftone-gold flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <div className="font-comic text-lg font-bold text-slate-900 leading-tight">
-                {unlockedBadges.length} / {WORLD_COUNTRIES.length}
-              </div>
-              <div className="text-[11px] font-semibold text-slate-500">
-                {lang === 'zh' ? '已收集勋章' : 'Badges Earned'}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* View Switcher & Region Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mt-5 pt-4 border-t border-amber-200">
-          {/* Mode Switcher: 3D Globe vs Classic Passport */}
-          <div className="flex items-center gap-1.5 bg-amber-200/80 p-1 rounded-2xl border-2 border-slate-900 shadow-sm">
-            <button
-              onClick={() => {
-                if (soundEnabled) playClickSound();
-                setViewMode('globe');
-              }}
-              className={`px-3 py-1.5 rounded-xl font-comic text-xs font-bold transition-all flex items-center gap-1.5 ${
-                viewMode === 'globe'
-                  ? 'bg-blue-600 text-white shadow-comic border-2 border-slate-900'
-                  : 'text-slate-800 hover:text-slate-950'
-              }`}
-            >
-              <Compass size={14} className={viewMode === 'globe' ? 'animate-spin-slow text-amber-300' : ''} />
-              <span>{lang === 'zh' ? '🌍 3D 航海地球仪' : '🌍 3D Mariner Globe'}</span>
-            </button>
-            <button
-              onClick={() => {
-                if (soundEnabled) playClickSound();
-                setViewMode('card');
-              }}
-              className={`px-3 py-1.5 rounded-xl font-comic text-xs font-bold transition-all flex items-center gap-1.5 ${
-                viewMode === 'card'
-                  ? 'bg-amber-400 text-slate-950 shadow-comic border-2 border-slate-900'
-                  : 'text-slate-800 hover:text-slate-950'
-              }`}
-            >
-              <span>{lang === 'zh' ? '🗂️ 护照卡片集' : '🗂️ Passport Cards'}</span>
-            </button>
-          </div>
-
-          {/* Region Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {['All', 'Americas', 'Europe', 'Asia', 'Africa', 'Oceania', 'Polar'].map(cat => (
-              <button
-                key={cat}
-                onClick={() => {
-                  if (soundEnabled) playClickSound();
-                  setCategoryFilter(cat);
-                  setSelectedIdx(0);
-                  setActiveTab('fact');
-                  setSelectedOpt(null);
-                  setIsAnswered(false);
-                }}
-                className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
-                  categoryFilter === cat
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-white/80 hover:bg-white text-slate-700 border border-slate-300'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 3D Interactive Earth Globe Section */}
-      {viewMode === 'globe' && (
-        <div className="mb-6 animate-in fade-in zoom-in-95 duration-200">
-          <Globe3D
-            lang={lang}
-            soundEnabled={soundEnabled}
-            unlockedBadges={unlockedBadges}
-            selectedCountry={currentCountry}
-            onSelectCountry={country => {
-              const idx = filteredCountries.findIndex(c => c.id === country.id);
-              if (idx !== -1) {
-                setSelectedIdx(idx);
-              }
-              setActiveTab('fact');
-              setSelectedOpt(null);
-              setIsAnswered(false);
-            }}
-          />
-        </div>
-      )}
-
-      {/* Main Single Country Fact Card ("一页一个 Fun Fact") */}
-      <div className="bg-white comic-box-lg rounded-3xl p-6 md:p-8 relative bg-halftone mb-6">
-        {/* Country Profile Strip */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b-2 border-slate-200">
-          <div className="flex items-center gap-3.5">
-            <span className="text-4xl md:text-5xl drop-shadow-sm">
-              {currentCountry.flag}
-            </span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-comic text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
-                  {lang === 'zh' ? currentCountry.nameZh : currentCountry.nameEn}
-                </h2>
-                {isBadgeUnlocked && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 border border-emerald-400 font-comic text-xs font-bold text-emerald-800">
-                    <Sparkles size={12} />
-                    {lang === 'zh' ? '已点亮' : 'Badge Earned'}
-                  </span>
-                )}
-              </div>
-              <div className="text-xs text-slate-500 font-semibold mt-0.5">
-                <span>{lang === 'zh' ? '首都：' : 'Capital: '}</span>
-                <span className="text-slate-800 font-bold">
-                  {lang === 'zh' ? currentCountry.capitalZh : currentCountry.capitalEn}
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-2xl">🌍</span>
+                <span className="font-comic text-xs font-bold uppercase tracking-wider text-amber-800">
+                  {lang === 'zh' ? '水手 3D 航海地球仪' : 'Mariner 3D Globe Explorer'}
                 </span>
-                <span className="mx-2">·</span>
-                <span className="text-blue-600 font-semibold">
+              </div>
+              <h1 className="font-comic text-xl md:text-2xl font-extrabold text-slate-900 leading-tight">
+                {lang === 'zh' ? '点击地球上的国家与标志性地标！' : 'Spin the Globe & Tap Countries or Landmarks!'}
+              </h1>
+              <p className="text-xs text-slate-600 font-medium mt-0.5">
+                {lang === 'zh'
+                  ? '拖动旋转地球，点击任意国家或地标开启神奇冷知识探险！'
+                  : 'Rotate the globe, find landmarks, and tap to discover fun facts!'}
+              </p>
+            </div>
+
+            {/* Badges collected counter */}
+            <div className="bg-white comic-box rounded-2xl px-4 py-3 flex items-center gap-3 shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-lg shadow-sm">
+                🎖️
+              </div>
+              <div>
+                <div className="font-comic text-base font-bold text-slate-900 leading-tight">
+                  {unlockedBadges.length} / {WORLD_COUNTRIES.length}
+                </div>
+                <div className="text-[10px] font-semibold text-slate-500">
+                  {lang === 'zh' ? '已点亮勋章' : 'Badges Earned'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3D Interactive Globe Canvas */}
+          <div className="mb-4">
+            <Globe3D
+              lang={lang}
+              soundEnabled={soundEnabled}
+              unlockedBadges={unlockedBadges}
+              selectedCountry={currentCountry}
+              onSelectCountry={country => {
+                const idx = filteredCountries.findIndex(c => c.id === country.id);
+                if (idx !== -1) {
+                  setSelectedIdx(idx);
+                }
+                // Transition directly to the focused Fun Fact card and hide 3D world!
+                if (soundEnabled) playClickSound();
+                setActiveTab('fact');
+                setSelectedOpt(null);
+                setIsAnswered(false);
+                setViewMode('fact');
+              }}
+            />
+          </div>
+
+          {/* Prompt banner to start Fun Fact */}
+          <div className="bg-white comic-box rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-halftone">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{currentCountry.flag}</span>
+              <div>
+                <div className="font-comic text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <span>{lang === 'zh' ? currentCountry.nameZh : currentCountry.nameEn}</span>
+                  {currentLandmark && (
+                    <span className="text-xs text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-lg">
+                      {currentLandmark.icon} {lang === 'zh' ? currentLandmark.shortNameZh : currentLandmark.shortNameEn}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-slate-600 font-medium">
                   {lang === 'zh' ? currentCountry.taglineZh : currentCountry.taglineEn}
-                </span>
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Sub-tab Switcher: Fact vs Quiz */}
-          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-300">
             <button
               onClick={() => {
                 if (soundEnabled) playClickSound();
                 setActiveTab('fact');
+                setSelectedOpt(null);
+                setIsAnswered(false);
+                setViewMode('fact');
               }}
-              className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all ${
-                activeTab === 'fact'
-                  ? 'bg-amber-300 text-slate-900 shadow-sm border border-slate-900'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className="comic-btn w-full sm:w-auto px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-comic text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-comic transition-all"
             >
-              📖 {lang === 'zh' ? '冷知识百科' : 'Fun Fact'}
+              <BookOpen size={15} />
+              <span>
+                {lang === 'zh'
+                  ? `阅读【${currentCountry.nameZh}】冷知识与问答 ➔`
+                  : `Explore ${currentCountry.nameEn} Fun Fact ➔`}
+              </span>
             </button>
+          </div>
+        </div>
+      ) : (
+        /* =========================================================================
+           MODE 2: FOCUSED FUN FACT & QUIZ (3D World is completely HIDDEN, text is concise!)
+           ========================================================================= */
+        <div className="animate-in fade-in zoom-in-95 duration-200">
+          {/* Top Navigation Bar: Back to Globe button + Country switcher */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <button
               onClick={() => {
                 if (soundEnabled) playClickSound();
-                setActiveTab('quiz');
+                stopSpeaking();
+                setIsSpeaking(false);
+                setViewMode('globe');
               }}
-              className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all ${
-                activeTab === 'quiz'
-                  ? 'bg-blue-500 text-white shadow-sm border border-slate-900'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className="comic-btn px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl flex items-center gap-2 shadow-comic transition-all"
             >
-              🎯 {lang === 'zh' ? '有奖问答' : 'Trivia Quiz'}
+              <Globe size={15} className="animate-spin-slow" />
+              <span>{lang === 'zh' ? '⬅️ 返回 3D 地球仪' : '⬅️ Back to 3D Globe'}</span>
             </button>
-          </div>
-        </div>
 
-        {/* TAB 1: FUN FACT VIEW */}
-        {activeTab === 'fact' && (
-          <div className="animate-in fade-in">
-            {/* Audio Speech Button */}
-            <div className="flex justify-end mb-3">
+            {/* Country Carousel Controls */}
+            <div className="flex items-center gap-1.5 bg-white comic-box rounded-xl p-1">
               <button
-                onClick={() => handleSpeak(currentCountry.funFactEn)}
-                className={`comic-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
-                  isSpeaking ? 'bg-amber-400 text-slate-900 ring-2 ring-slate-900' : 'bg-slate-100 hover:bg-white text-slate-700'
-                }`}
-                title="Listen to English read-aloud"
+                onClick={handlePrevCountry}
+                className="comic-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-700"
+                title="Previous Country"
               >
-                {isSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                <span>{isSpeaking ? 'Stop' : '🔊 Read Fact'}</span>
+                <ArrowLeft size={16} />
               </button>
-            </div>
-
-            {/* Country Illustration Graphic Novel Visual */}
-            <div className="mb-4">
-              <CountryIllustration countryId={currentCountry.id} name={currentCountry.nameEn} lang={lang} />
-            </div>
-
-            {/* Giant Comic Fact Box */}
-            <div className="bg-amber-50/80 border-2 border-slate-900 rounded-3xl p-6 md:p-8 shadow-comic relative mb-6">
-              <span className="absolute -top-3.5 left-6 bg-amber-400 border-2 border-slate-900 text-slate-900 px-3 py-0.5 rounded-full font-comic text-xs font-bold uppercase tracking-wider">
-                {lang === 'zh' ? '🌟 你知道吗？· Fun Fact' : '🌟 Did You Know?'}
+              <span className="font-comic text-xs font-bold px-2 text-slate-800">
+                {selectedIdx + 1} / {filteredCountries.length}
               </span>
-
-              <p className="font-comic text-lg md:text-xl font-bold text-slate-900 leading-relaxed mb-4">
-                {currentCountry.funFactEn}
-              </p>
-
-              {lang === 'zh' && (
-                <p className="text-sm md:text-base text-slate-700 font-medium leading-relaxed pt-3 border-t border-amber-200">
-                  {currentCountry.funFactZh}
-                </p>
-              )}
-            </div>
-
-            {/* Landmark Showcase Box */}
-            {COUNTRY_LANDMARKS[currentCountry.id] && (() => {
-              const landmark = COUNTRY_LANDMARKS[currentCountry.id];
-              return (
-                <div className="bg-white border-2 border-slate-900 rounded-3xl p-5 md:p-6 shadow-comic mb-6">
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b-2 border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl drop-shadow-sm">{landmark.icon}</span>
-                      <div>
-                        <div className="text-[11px] font-comic font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1">
-                          <span>🏛️ {lang === 'zh' ? '国家标志性建筑与地标' : 'Iconic Landmark & Monument'}</span>
-                        </div>
-                        <h3 className="font-comic text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
-                          {lang === 'zh' ? landmark.nameZh : landmark.nameEn}
-                        </h3>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-300 font-comic text-xs font-bold text-slate-700">
-                        📍 {lang === 'zh' ? landmark.cityZh : landmark.cityEn}
-                      </span>
-                      <span className="px-2.5 py-1 rounded-xl bg-amber-100 border border-amber-300 font-comic text-xs font-bold text-amber-900">
-                        📏 {landmark.heightOrScale}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p className="text-xs md:text-sm text-slate-700 leading-relaxed mb-3">
-                    {lang === 'zh' ? landmark.descZh : landmark.descEn}
-                  </p>
-
-                  <div className="p-3.5 rounded-2xl bg-amber-50/90 border-2 border-amber-200 text-xs text-amber-950">
-                    <div className="font-comic font-bold text-amber-900 flex items-center gap-1.5 mb-1">
-                      <Sparkles size={13} className="text-amber-600" />
-                      <span>{lang === 'zh' ? '🌟 建筑力学与历史秘闻：' : '🌟 Architectural Secret: '}</span>
-                    </div>
-                    <p className="leading-relaxed">
-                      {lang === 'zh' ? landmark.architecturalFactZh : landmark.architecturalFactEn}
-                    </p>
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Unlock Badge Preview Prompt */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-blue-50 p-4 rounded-2xl border border-blue-200">
-              <div className="flex items-center gap-2.5">
-                <span className="text-2xl">🎖️</span>
-                <div>
-                  <div className="font-comic text-sm font-bold text-blue-950">
-                    {lang === 'zh' ? currentCountry.badgeTitleZh : currentCountry.badgeTitleEn}
-                  </div>
-                  <div className="text-xs text-blue-800">
-                    {lang === 'zh' ? '回答 1 道轻松趣味小问答，即可解锁该国家勋章！' : 'Answer the quick trivia quiz to claim this official badge!'}
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                  if (soundEnabled) playClickSound();
-                  setActiveTab('quiz');
-                }}
-                className="comic-btn px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl whitespace-nowrap"
-              >
-                {lang === 'zh' ? '前往有奖问答 ➔' : 'Take Quiz ➔'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 2: TRIVIA QUIZ VIEW */}
-        {activeTab === 'quiz' && (
-          <div className="animate-in fade-in">
-            <div className="mb-4">
-              <span className="text-xs font-bold text-blue-600 uppercase tracking-wide">
-                Trivia Challenge · {currentCountry.nameEn}
-              </span>
-              <h3 className="font-comic text-xl font-bold text-slate-900 mt-1">
-                {currentCountry.quiz.questionEn}
-              </h3>
-              {lang === 'zh' && (
-                <p className="text-sm text-slate-600 mt-1 font-medium">
-                  {currentCountry.quiz.questionZh}
-                </p>
-              )}
-            </div>
-
-            {/* Options */}
-            <div className="grid grid-cols-1 gap-3 mb-6">
-              {currentCountry.quiz.optionsEn.map((optEn, i) => {
-                const optZh = currentCountry.quiz.optionsZh[i];
-                const isSelected = selectedOpt === i;
-                const isCorrectOption = isAnswered && i === currentCountry.quiz.correctIndex;
-                const isWrongSelection = isAnswered && isSelected && !isCorrect;
-
-                let style = 'bg-white hover:bg-slate-50 border-slate-900 text-slate-900';
-                if (isSelected && !isAnswered) {
-                  style = 'bg-amber-300 ring-2 ring-slate-900 shadow-comic';
-                } else if (isCorrectOption) {
-                  style = 'bg-emerald-300 border-emerald-900 text-emerald-950 font-bold';
-                } else if (isWrongSelection) {
-                  style = 'bg-rose-200 border-rose-800 text-rose-950 opacity-80';
-                }
-
-                return (
-                  <button
-                    key={i}
-                    onClick={() => handleSelectQuizOption(i)}
-                    disabled={isAnswered && isCorrect}
-                    className={`comic-btn p-3.5 rounded-2xl text-left flex items-start gap-3 transition-all ${style}`}
-                  >
-                    <span className="w-6 h-6 rounded-lg bg-slate-900 text-white font-comic text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                      {String.fromCharCode(65 + i)}
-                    </span>
-                    <div className="flex-1">
-                      <div className="font-comic font-bold text-sm leading-tight">
-                        {optEn}
-                      </div>
-                      {lang === 'zh' && optZh !== optEn && (
-                        <div className="text-xs text-slate-600 mt-0.5 font-medium">
-                          {optZh}
-                        </div>
-                      )}
-                    </div>
-                    {isCorrectOption && (
-                      <CheckCircle2 size={18} className="text-emerald-700 shrink-0 self-center" />
-                    )}
-                    {isWrongSelection && (
-                      <XCircle size={18} className="text-rose-700 shrink-0 self-center" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Quiz Result / Explanation Box */}
-            {isAnswered && (
-              <div
-                className={`mb-6 p-4 rounded-2xl border-2 ${
-                  isCorrect ? 'bg-emerald-50 border-emerald-400' : 'bg-slate-100 border-slate-300'
-                }`}
-              >
-                <div className="flex items-center gap-1.5 mb-1 font-comic text-sm font-bold">
-                  {isCorrect ? (
-                    <span className="text-emerald-800 flex items-center gap-1">
-                      <Sparkles size={16} />
-                      {lang === 'zh' ? '回答正确！勋章已收录进你的护照！' : 'Correct! Badge stamped into your passport!'}
-                    </span>
-                  ) : (
-                    <span className="text-slate-700">
-                      {lang === 'zh' ? '正确解答：' : 'Fact Explanation:'}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs md:text-sm text-slate-800 font-medium leading-relaxed">
-                  {currentCountry.quiz.explanationEn}
-                </p>
-                {lang === 'zh' && (
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    {currentCountry.quiz.explanationZh}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Check button */}
-            {!isAnswered ? (
-              <button
-                onClick={handleCheckQuiz}
-                disabled={selectedOpt === null}
-                className="w-full comic-btn py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-900 font-comic font-bold text-sm rounded-xl"
-              >
-                {lang === 'zh' ? '提交答案 ➔' : 'Submit Answer ➔'}
-              </button>
-            ) : (
               <button
                 onClick={handleNextCountry}
-                className="w-full comic-btn py-3 bg-blue-600 hover:bg-blue-500 text-white font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-2"
+                className="comic-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-700"
+                title="Next Country"
               >
-                <span>{lang === 'zh' ? '探索下一国家 ➔' : 'Explore Next Country ➔'}</span>
                 <ArrowRight size={16} />
               </button>
-            )}
+            </div>
           </div>
-        )}
 
-        {/* Paging Navigation Bottom Bar */}
-        <div className="flex items-center justify-between mt-8 pt-4 border-t-2 border-slate-200">
-          <button
-            onClick={handlePrevCountry}
-            className="comic-btn px-4 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
-          >
-            <ArrowLeft size={14} />
-            <span>{lang === 'zh' ? '上一国' : 'Previous'}</span>
-          </button>
-
-          <span className="font-comic text-xs font-bold text-slate-500">
-            {selectedIdx + 1} / {filteredCountries.length}
-          </span>
-
-          <button
-            onClick={handleNextCountry}
-            className="comic-btn px-4 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
-          >
-            <span>{lang === 'zh' ? '下一国' : 'Next'}</span>
-            <ArrowRight size={14} />
-          </button>
-        </div>
-      </div>
-
-      {/* Passport Stamps Collection Showcase */}
-      <div className="bg-white comic-box rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">📖</span>
-            <h3 className="font-comic text-lg font-bold text-slate-900">
-              {lang === 'zh' ? '水手护照印章册' : 'Passport Badge Collection'}
-            </h3>
-          </div>
-          <span className="text-xs font-bold text-slate-500">
-            {unlockedBadges.length} / {WORLD_COUNTRIES.length} {lang === 'zh' ? '枚' : 'stamps'}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5">
-          {WORLD_COUNTRIES.map((country, idx) => {
-            const isCollected = unlockedBadges.includes(country.id);
-            const isCurrentlyViewing = country.id === currentCountry.id;
-
-            return (
-              <button
-                key={country.id}
-                onClick={() => {
-                  if (soundEnabled) playClickSound();
-                  setCategoryFilter('All');
-                  setSelectedIdx(idx);
-                  setActiveTab('fact');
-                  setSelectedOpt(null);
-                  setIsAnswered(false);
-                }}
-                className={`comic-box-sm p-2 rounded-xl flex flex-col items-center justify-center transition-all ${
-                  isCurrentlyViewing
-                    ? 'ring-2 ring-blue-600 bg-blue-50 scale-105'
-                    : isCollected
-                    ? 'bg-amber-50 hover:bg-amber-100'
-                    : 'bg-slate-50 opacity-50 hover:opacity-80'
-                }`}
-                title={country.nameEn}
-              >
-                <span className="text-2xl mb-1">{country.flag}</span>
-                <span className="font-comic text-[11px] font-bold text-slate-800 truncate w-full text-center">
-                  {lang === 'zh' ? country.nameZh : country.nameEn}
+          {/* Focused Fun Fact Card */}
+          <div className="bg-white comic-box-lg rounded-3xl p-6 md:p-8 relative bg-halftone shadow-comic">
+            {/* Header: Flag, Country Name, Badges, Tab Switcher */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-5 pb-4 border-b-2 border-slate-200">
+              <div className="flex items-center gap-3.5">
+                <span className="text-4xl md:text-5xl drop-shadow-sm">
+                  {currentCountry.flag}
                 </span>
-                {isCollected ? (
-                  <span className="text-[10px] text-emerald-600 font-bold">✓</span>
-                ) : (
-                  <span className="text-[10px] text-slate-400">🔒</span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-comic text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
+                      {lang === 'zh' ? currentCountry.nameZh : currentCountry.nameEn}
+                    </h2>
+                    {isBadgeUnlocked && (
+                      <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-100 border border-emerald-400 font-comic text-xs font-bold text-emerald-800 shadow-sm">
+                        <Sparkles size={12} />
+                        {lang === 'zh' ? '勋章已获得' : 'Badge Unlocked'}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-slate-500 font-semibold mt-0.5 flex items-center gap-2">
+                    <span>📍 {lang === 'zh' ? `首都：${currentCountry.capitalZh}` : `Capital: ${currentCountry.capitalEn}`}</span>
+                    <span>·</span>
+                    <span className="text-blue-600 font-bold">{lang === 'zh' ? currentCountry.taglineZh : currentCountry.taglineEn}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tab Switcher: Fun Fact vs Trivia Quiz */}
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-300">
+                <button
+                  onClick={() => {
+                    if (soundEnabled) playClickSound();
+                    setActiveTab('fact');
+                  }}
+                  className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all flex items-center gap-1 ${
+                    activeTab === 'fact'
+                      ? 'bg-amber-300 text-slate-900 shadow-sm border border-slate-900'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <BookOpen size={13} />
+                  <span>{lang === 'zh' ? '神奇冷知识' : 'Fun Fact'}</span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (soundEnabled) playClickSound();
+                    setActiveTab('quiz');
+                  }}
+                  className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all flex items-center gap-1 ${
+                    activeTab === 'quiz'
+                      ? 'bg-blue-600 text-white shadow-sm border border-slate-900'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Target size={13} />
+                  <span>{lang === 'zh' ? '问答赢勋章' : 'Trivia Quiz'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* TAB 1: BITE-SIZED FUN FACT (Short, punchy, kid-friendly) */}
+            {activeTab === 'fact' && (
+              <div className="animate-in fade-in">
+                {/* Audio Read-Aloud Button */}
+                <div className="flex justify-end mb-3">
+                  <button
+                    onClick={() => handleSpeak(currentCountry.funFactEn)}
+                    className={`comic-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                      isSpeaking ? 'bg-amber-400 text-slate-900 ring-2 ring-slate-900' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    }`}
+                    title="Listen to English pronunciation"
+                  >
+                    {isSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                    <span>{isSpeaking ? 'Stop Audio' : '🔊 英文朗读 (Read Aloud)'}</span>
+                  </button>
+                </div>
+
+                {/* Country Illustration Novel Graphic */}
+                <div className="mb-4">
+                  <CountryIllustration countryId={currentCountry.id} name={currentCountry.nameEn} lang={lang} />
+                </div>
+
+                {/* Single Bite-Sized Fun Fact Box */}
+                <div className="bg-amber-50/90 border-2 border-slate-900 rounded-3xl p-5 md:p-6 shadow-comic relative mb-5">
+                  <span className="absolute -top-3 left-5 bg-amber-400 border-2 border-slate-900 text-slate-900 px-3 py-0.5 rounded-full font-comic text-xs font-bold uppercase tracking-wider">
+                    {lang === 'zh' ? '🌟 神奇冷知识 · Did You Know?' : '🌟 Fun Fact'}
+                  </span>
+
+                  <p className="font-comic text-base md:text-lg font-extrabold text-slate-900 leading-relaxed mb-2 mt-1">
+                    {currentCountry.funFactEn}
+                  </p>
+
+                  {lang === 'zh' && (
+                    <p className="text-sm md:text-base text-slate-700 font-semibold leading-relaxed pt-2 border-t border-amber-200">
+                      {currentCountry.funFactZh}
+                    </p>
+                  )}
+                </div>
+
+                {/* Compact Landmark Highlight (Only 1 fun memorable sentence!) */}
+                {currentLandmark && (
+                  <div className="bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 shadow-sm mb-5 flex items-start gap-3">
+                    <span className="text-3xl p-2 bg-white rounded-xl border border-slate-200 shadow-sm shrink-0">
+                      {currentLandmark.icon}
+                    </span>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-comic text-sm font-extrabold text-slate-900">
+                          {lang === 'zh' ? currentLandmark.nameZh : currentLandmark.nameEn}
+                        </span>
+                        <span className="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded-md font-bold">
+                          📍 {lang === 'zh' ? currentLandmark.cityZh : currentLandmark.cityEn}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                        {lang === 'zh' ? currentLandmark.architecturalFactZh : currentLandmark.architecturalFactEn}
+                      </p>
+                    </div>
+                  </div>
                 )}
+
+                {/* Call to action to take Quiz */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-blue-50 p-4 rounded-2xl border-2 border-blue-300 shadow-sm">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-2xl">🎖️</span>
+                    <div>
+                      <div className="font-comic text-sm font-bold text-blue-950">
+                        {lang === 'zh' ? currentCountry.badgeTitleZh : currentCountry.badgeTitleEn}
+                      </div>
+                      <div className="text-xs text-blue-800 font-medium">
+                        {lang === 'zh' ? '回答 1 道轻松趣味小问答，即可点亮该国探索勋章！' : 'Answer 1 quick fun trivia question to earn this badge!'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (soundEnabled) playClickSound();
+                      setActiveTab('quiz');
+                    }}
+                    className="comic-btn w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-comic whitespace-nowrap"
+                  >
+                    <span>{lang === 'zh' ? '前往有奖问答 ➔' : 'Take Trivia Quiz ➔'}</span>
+                    <Target size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: TRIVIA QUIZ (1-Question Challenge) */}
+            {activeTab === 'quiz' && (
+              <div className="animate-in fade-in">
+                <div className="mb-4">
+                  <span className="text-xs font-bold text-blue-600 uppercase tracking-wide flex items-center gap-1">
+                    <Target size={14} />
+                    <span>Trivia Challenge · {currentCountry.nameEn}</span>
+                  </span>
+                  <h3 className="font-comic text-lg md:text-xl font-extrabold text-slate-900 mt-1 leading-snug">
+                    {currentCountry.quiz.questionEn}
+                  </h3>
+                  {lang === 'zh' && (
+                    <p className="text-sm text-slate-600 mt-1 font-semibold">
+                      {currentCountry.quiz.questionZh}
+                    </p>
+                  )}
+                </div>
+
+                {/* Shuffled Options */}
+                <div className="grid grid-cols-1 gap-2.5 mb-5">
+                  {quizData.optionsEn.map((optEn, i) => {
+                    const optZh = quizData.optionsZh[i];
+                    const isSelected = selectedOpt === i;
+                    const isCorrectOption = isAnswered && i === quizData.correctIndex;
+                    const isWrongSelection = isAnswered && isSelected && !isCorrect;
+
+                    let style = 'bg-white hover:bg-slate-50 border-slate-900 text-slate-900';
+                    if (isSelected && !isAnswered) {
+                      style = 'bg-amber-300 ring-2 ring-slate-900 shadow-comic';
+                    } else if (isCorrectOption) {
+                      style = 'bg-emerald-300 border-emerald-900 text-emerald-950 font-bold';
+                    } else if (isWrongSelection) {
+                      style = 'bg-rose-200 border-rose-800 text-rose-950 opacity-80';
+                    }
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handleSelectQuizOption(i)}
+                        disabled={isAnswered && isCorrect}
+                        className={`comic-btn p-3.5 rounded-2xl text-left flex items-start gap-3 transition-all ${style}`}
+                      >
+                        <span className="w-6 h-6 rounded-lg bg-slate-900 text-white font-comic text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                          {String.fromCharCode(65 + i)}
+                        </span>
+                        <div className="flex-1">
+                          <div className="font-comic font-bold text-sm leading-tight">
+                            {optEn}
+                          </div>
+                          {lang === 'zh' && optZh !== optEn && (
+                            <div className="text-xs text-slate-600 mt-0.5 font-medium">
+                              {optZh}
+                            </div>
+                          )}
+                        </div>
+                        {isCorrectOption && (
+                          <CheckCircle2 size={18} className="text-emerald-700 shrink-0 self-center" />
+                        )}
+                        {isWrongSelection && (
+                          <XCircle size={18} className="text-rose-700 shrink-0 self-center" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Quiz Result / Explanation Box */}
+                {isAnswered && (
+                  <div
+                    className={`mb-5 p-4 rounded-2xl border-2 ${
+                      isCorrect ? 'bg-emerald-50 border-emerald-400' : 'bg-slate-100 border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 mb-1 font-comic text-sm font-bold">
+                      {isCorrect ? (
+                        <span className="text-emerald-800 flex items-center gap-1">
+                          <Sparkles size={16} />
+                          {lang === 'zh' ? '回答正确！勋章已盖入你的探索家护照！' : 'Correct! Official badge stamped into your passport!'}
+                        </span>
+                      ) : (
+                        <span className="text-slate-700">
+                          {lang === 'zh' ? '正确解答：' : 'Fact Explanation:'}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs md:text-sm text-slate-800 font-medium leading-relaxed">
+                      {currentCountry.quiz.explanationEn}
+                    </p>
+                    {lang === 'zh' && (
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                        {currentCountry.quiz.explanationZh}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Submit or Next Button */}
+                {!isAnswered ? (
+                  <button
+                    onClick={handleCheckQuiz}
+                    disabled={selectedOpt === null}
+                    className="w-full comic-btn py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-900 font-comic font-bold text-sm rounded-xl shadow-comic"
+                  >
+                    {lang === 'zh' ? '提交答案 ➔' : 'Submit Answer ➔'}
+                  </button>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <button
+                      onClick={handleNextCountry}
+                      className="w-full sm:flex-1 comic-btn py-3 bg-blue-600 hover:bg-blue-500 text-white font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-comic"
+                    >
+                      <span>{lang === 'zh' ? '探索下一国家 ➔' : 'Explore Next Country ➔'}</span>
+                      <ArrowRight size={16} />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('globe')}
+                      className="w-full sm:w-auto comic-btn px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-1.5"
+                    >
+                      <Globe size={15} />
+                      <span>{lang === 'zh' ? '返回地球仪' : 'Back to Globe'}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Bottom Carousel Navigation */}
+            <div className="flex items-center justify-between mt-6 pt-4 border-t-2 border-slate-200">
+              <button
+                onClick={handlePrevCountry}
+                className="comic-btn px-3.5 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
+              >
+                <ArrowLeft size={14} />
+                <span>{lang === 'zh' ? '上一国家' : 'Previous'}</span>
               </button>
-            );
-          })}
+
+              <button
+                onClick={() => setViewMode('globe')}
+                className="comic-btn px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-comic text-xs font-bold rounded-xl flex items-center gap-1"
+              >
+                <Compass size={13} />
+                <span>{lang === 'zh' ? '地球仪总览' : 'Globe View'}</span>
+              </button>
+
+              <button
+                onClick={handleNextCountry}
+                className="comic-btn px-3.5 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
+              >
+                <span>{lang === 'zh' ? '下一国家' : 'Next'}</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

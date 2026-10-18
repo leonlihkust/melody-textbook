@@ -471,7 +471,7 @@ export default function App() {
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">📚</span>
                 <span className="font-comic text-xs font-bold uppercase tracking-wider text-blue-700">
-                  WRDSB Grade 4 Long Range Plan (LRP)
+                  {lang === 'zh' ? '滑铁卢教育局四年级全学年教学规划 (LRP)' : 'WRDSB Grade 4 Long Range Plan (LRP)'}
                 </span>
               </div>
               <h1 className="font-comic text-2xl md:text-3xl font-bold text-slate-900 leading-tight mb-3">
@@ -493,7 +493,7 @@ export default function App() {
                   </div>
                   <p className="text-xs text-slate-600 font-medium leading-relaxed">
                     {lang === 'zh'
-                      ? '本应用由家长 Yang 和 Melody 倾注心血打造，专为女儿及滑铁卢 Millen Woods Public School 等公立学校四年级同学们定制。遵循 WRDSB 全年 40 周官方教学大纲（Tier 1–3），融入滑铁卢本土真实场景，让数学与世界探索更有温度！'
+                      ? '本应用由家长 Yang 和 Melody 倾注心血打造，专为女儿及滑铁卢米伦伍兹公立学校（Millen Woods Public School）等同学们定制。紧扣滑铁卢教育局全年 40 周官方教学计划，融入滑铁卢本土真实场景，让数学与世界探索更有温度！'
                       : 'Proudly engineered by parents Yang & Melody, specifically tailored for our daughter and her fellow Grade 4 Mariners at Millen Woods Public School, Waterloo. Fully aligned to the official WRDSB 40-week Long Range Plan with local context!'}
                   </p>
                 </div>
@@ -503,66 +503,66 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200">
                   <h3 className="font-comic text-base font-bold text-blue-900 mb-1">
-                    🍂 Sept–Oct: Number Sense & Rounding
+                    {lang === 'zh' ? '🍂 9月–10月：数感与四舍五入' : '🍂 Sept–Oct: Number Sense & Rounding'}
                   </h3>
                   <p className="text-xs text-blue-800 leading-relaxed font-medium">
                     {lang === 'zh'
-                      ? '万以内数位拆分（标准与非标准）、ION 轻轨数轴四舍五入与逆向极值思考。'
+                      ? '万以内多位数标准与非标准数位拆分、借助滑铁卢轻轨数轴进行四舍五入与逆向极值思考。'
                       : 'Numbers up to 10,000, non-standard partitioning, ION LRT number line rounding & reverse boundary logic.'}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
                   <h3 className="font-comic text-base font-bold text-emerald-900 mb-1">
-                    📐 Oct: Geometric Reasoning & Grid
+                    {lang === 'zh' ? '📐 10月：几何思维与空间网格' : '📐 Oct: Geometric Reasoning & Grid'}
                   </h3>
                   <p className="text-xs text-emerald-800 leading-relaxed font-medium">
                     {lang === 'zh'
-                      ? '锐角/直角/钝角 90° 基准、四边形分类、对称轴与银湖网格平移。'
+                      ? '锐角/直角/钝角的 90° 基准、四边形分类、对称轴以及平面坐标网格平移。'
                       : 'Benchmark 90° angles, quadrilateral families, lines of symmetry, and (x, y) translations.'}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200">
                   <h3 className="font-comic text-base font-bold text-amber-900 mb-1">
-                    ✖️ Oct–Jan: Arrays, Multi-Digit & Ratios
+                    {lang === 'zh' ? '✖️ 10月–1月：乘法阵列与生活比率表' : '✖️ Oct–Jan: Arrays, Multi-Digit & Ratios'}
                   </h3>
                   <p className="text-xs text-amber-800 leading-relaxed font-medium">
                     {lang === 'zh'
-                      ? '2× ➔ 4× ➔ 8× 翻倍链、面积模型（Area Model）、有余数除法与圣雅各布斯比率表。'
-                      : 'Doubling chains, rectangular area models, division remainders, and St. Jacobs ratio tables.'}
+                      ? '乘法阵列与连续翻倍心算、矩形分块面积模型、有余数除法以及生活中的正比例与比率表应用。'
+                      : 'Doubling mental math, rectangular area models, division with remainders, and proportional ratio tables.'}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200">
                   <h3 className="font-comic text-base font-bold text-purple-900 mb-1">
-                    🍕 Jan–Feb: Fractions & Tenths Decimals
+                    {lang === 'zh' ? '🍕 1月–2月：分数模型与小数初探' : '🍕 Jan–Feb: Fractions & Tenths Decimals'}
                   </h3>
                   <p className="text-xs text-purple-800 leading-relaxed font-medium">
                     {lang === 'zh'
-                      ? '假分数与带分数互化、集合的分数、十分之一小数及购物换算。'
+                      ? '真分数、假分数与带分数互化，集合的分数表示，以及十分之一小数与找零计算。'
                       : 'Improper fractions, mixed numbers, fractions of a set, tenths decimals (0.1–0.9), and money change.'}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200">
                   <h3 className="font-comic text-base font-bold text-rose-900 mb-1">
-                    ⚖️ Mar–Apr: Patterns & Balance Equations
+                    {lang === 'zh' ? '⚖️ 3月–4月：规律模式与天平代数' : '⚖️ Mar–Apr: Patterns & Balance Equations'}
                   </h3>
                   <p className="text-xs text-rose-800 leading-relaxed font-medium">
                     {lang === 'zh'
-                      ? '递增数列规律、天平未知数方程（2x + 8 = 26）与不等式。'
+                      ? '递增数列规律探索、函数机器、天平未知数方程（2x + 8 = 26）与不等式求解。'
                       : 'Growing pattern rules, function machines, balance scale equations, and inequality limits.'}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200">
                   <h3 className="font-comic text-base font-bold text-teal-900 mb-1">
-                    📏 May–Jun: Measurement & Coding
+                    {lang === 'zh' ? '📏 5月–6月：周长面积、时间与编程逻辑' : '📏 May–Jun: Measurement & Coding'}
                   </h3>
                   <p className="text-xs text-teal-800 leading-relaxed font-medium">
                     {lang === 'zh'
-                      ? '长方形周长与面积、经过时间换算、5级概率连续体与伪代码 REPEAT 循环。'
+                      ? '长方形周长与面积、经过时间推算、五级概率事件评估与编程重复循环结构。'
                       : 'Perimeter vs area, elapsed time, 5-level probability continuum, and pseudocode REPEAT loops.'}
                   </p>
                 </div>

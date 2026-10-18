@@ -28,7 +28,7 @@ export const MarinerAiBuddy: React.FC<MarinerAiBuddyProps> = ({
         role: 'assistant',
         content:
           lang === 'zh'
-            ? '⚓ 嗨！我是 Melody 的航海水手 AI 导师！无论是 4 年级奥数思维题、 Waterloo 当地地理还是几何小窍门，随时问我吧！准备好启航了吗？'
+            ? '⚓ 嗨！我是 Melody 的水手 AI 学习导师！无论是四年级数学思维题、滑铁卢当地自然地理还是几何解题窍门，随时问我吧！准备好启航了吗？'
             : "⚓ Ahoy! I'm Melody's Mariner AI Learning Buddy! Whether you need a clue for a tricky Grade 4 math problem, a Waterloo landmark story, or a fun geography adventure riddle, ask me anything! Ready to set sail?",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
@@ -56,7 +56,7 @@ export const MarinerAiBuddy: React.FC<MarinerAiBuddyProps> = ({
     },
     {
       en: '🍁 Tell me a cool secret about Laurel Creek or Waterloo!',
-      zh: '🍁 告诉我一个关于滑铁卢 Laurel Creek 的酷秘密！',
+      zh: '🍁 告诉我一个关于滑铁卢月桂溪的有趣秘密！',
     },
     {
       en: '📐 How do I measure perimeter and area without getting confused?',
@@ -146,7 +146,7 @@ export const MarinerAiBuddy: React.FC<MarinerAiBuddyProps> = ({
       } else if (qLower.includes('riddle') || query.includes('谜题') || query.includes('奥数')) {
         fallbackContent =
           lang === 'zh'
-            ? '👑 奥数小侦探谜题：\n小水手 Melody 带着一些金币去 St. Jacobs 集市。如果她每次买 4 个苹果，正好买完；如果每次买 5 个苹果，也正好买完。她的金币少于 30 枚，请问她正好有多少枚金币？\n（小提示：找 4 和 5 的公倍数哦！）'
+            ? '👑 奥数小侦探谜题：\n小水手 Melody 带着一些金币去圣雅各布农夫集市。如果她每次买 4 个苹果，正好买完；如果每次买 5 个苹果，也正好买完。她的金币少于 30 枚，请问她正好有多少枚金币？\n（小提示：找 4 和 5 的公倍数哦！）'
             : '👑 Mariner Detective Riddle: Melody is shopping at St. Jacobs Farmers’ Market with gold coins. If she buys apples in packs of 4, no coins are left over. If she buys in packs of 5, no coins are left over. She has fewer than 30 coins. How many gold coins does she have? (Hint: Find a common multiple of 4 and 5!)';
       } else {
         fallbackContent =

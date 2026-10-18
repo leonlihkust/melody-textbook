@@ -29,7 +29,22 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
 
   // Active question set calculated based on tier mode and variant seed
   const questions: QuestionItem[] = useMemo(() => {
-    return getQuestionsForTier(topic.questions, tierMode, topic.week, variantSeed);
+    const rawQuestions = getQuestionsForTier(topic.questions, tierMode, topic.week, variantSeed);
+    // Shuffle options dynamically so correct answer position is uniformly distributed across A, B, C, D
+    return rawQuestions.map(q => {
+      const indices = q.optionsEn.map((_, i) => i);
+      // Fisher-Yates shuffle
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      return {
+        ...q,
+        optionsEn: indices.map(i => q.optionsEn[i]),
+        optionsZh: indices.map(i => q.optionsZh[i]),
+        correctIndex: indices.indexOf(q.correctIndex),
+      };
+    });
   }, [topic, tierMode, variantSeed]);
 
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -267,7 +282,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🌟 {lang === 'zh' ? '循序闯关 (1➔5级递进)' : 'Progressive (Easy➔Olympiad)'}
+            🌟 {lang === 'zh' ? '循序渐进 (1➔5级递进)' : 'Progressive (1➔5)'}
           </button>
 
           <button
@@ -278,7 +293,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🟢 {lang === 'zh' ? 'Easy (简单稳固)' : 'Easy (Foundation)'}
+            🟢 {lang === 'zh' ? '基础巩固' : 'Foundation'}
           </button>
 
           <button
@@ -289,7 +304,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🟡 {lang === 'zh' ? 'Medium (核心进阶)' : 'Medium (Grade 4)'}
+            🟡 {lang === 'zh' ? '进阶强化' : 'Intermediate'}
           </button>
 
           <button
@@ -300,7 +315,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🔴 {lang === 'zh' ? 'Hard (高难挑战)' : 'Hard (Challenge)'}
+            🔴 {lang === 'zh' ? '综合挑战' : 'Advanced'}
           </button>
 
           <button
@@ -311,7 +326,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
                 : 'bg-white text-purple-900 border border-purple-300 hover:bg-purple-50 font-bold'
             }`}
           >
-            👑 {lang === 'zh' ? 'Olympiad (最难奥数脑王)' : 'Olympiad (Master Mind)'}
+            👑 {lang === 'zh' ? '思维奥数' : 'Olympiad'}
           </button>
         </div>
       </div>

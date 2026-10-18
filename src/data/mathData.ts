@@ -68,12 +68,12 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "3",
           "30",
-          "300（百位）",
+          "300",
           "3,000"
         ],
         "correctIndex": 2,
         "secretClueEn": "Look at the place column: 2 is ones, 8 is tens, 3 is hundreds, 4 is thousands.",
-        "secretClueZh": "看看数位表：2 是个位，8 是十位，3 位于百位（Hundreds）。",
+        "secretClueZh": "看看数位表：2 是个位，8 是十位，3 位于百位。",
         "explanationEn": "The 3 is in the hundreds column, which means it represents 3 × 100 = 300.",
         "explanationZh": "数字 3 位于百位，代表 3 个 100，即 300。",
         "visual": {
@@ -211,8 +211,8 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "+"
         ],
         "optionsZh": [
-          "<（小于）",
-          ">（大于）",
+          "<",
+          ">",
           "=",
           "+"
         ],
@@ -257,20 +257,20 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsEn": [
           "6",
           "7",
-          "8 or 9",
+          "8",
           "5"
         ],
         "optionsZh": [
           "6",
           "7",
-          "8 或 9",
+          "8",
           "5"
         ],
         "correctIndex": 2,
-        "secretClueEn": "The thousands (4) and tens/ones (58) match. The blank must be greater than 7.",
-        "secretClueZh": "千位相同，十位个位也相同（58）。要比 7 大，百位必须是 8 或 9。",
-        "explanationEn": "Only digits 8 or 9 are strictly greater than 7 in the hundreds place.",
-        "explanationZh": "百位填 8 或 9 时，4,858 或 4,958 均大于 4,758。"
+        "secretClueEn": "The thousands (4) and tens/ones (58) match. The blank must be greater than 7, so 8 works!",
+        "secretClueZh": "千位相同，十位个位也相同（58）。要比 7 大，百位填 8 大于 7。",
+        "explanationEn": "8 in the hundreds place makes 4,858 > 4,758.",
+        "explanationZh": "百位填 8 时，4,858 大于 4,758。"
       },
       {
         "id": "w2-q4",
@@ -382,7 +382,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "4,449 人",
-          "4,450 人（逆向极小值）",
+          "4,450 人",
           "4,495 人",
           "4,549 人"
         ],
@@ -406,7 +406,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "8,450"
         ],
         "optionsZh": [
-          "8,499（逆向极大值）",
+          "8,499",
           "8,500",
           "8,999",
           "8,450"
@@ -433,7 +433,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "5 个",
           "9 个",
-          "10 个（295 到 304）",
+          "10 个",
           "15 个"
         ],
         "correctIndex": 2,
@@ -513,7 +513,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Medium",
         "tierLabelZh": "进阶",
         "questionEn": "RIM Park soccer tournament had 1,420 morning visitors and 1,890 afternoon visitors. Estimate the total to the nearest 100.",
-        "questionZh": "RIM Park 足球赛上午迎来了 1,420 人，下午迎来了 1,890 人。估算总人数到最近的百位。",
+        "questionZh": "RIM Park 体育公园足球赛上午迎来了 1,420 人，下午迎来了 1,890 人。估算总人数到最近的百位。",
         "optionsEn": [
           "3,200",
           "3,300",
@@ -712,7 +712,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "800 克",
-          "400 克（空罐净重）",
+          "400 克",
           "1,700 克",
           "500 克"
         ],
@@ -776,8 +776,8 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "Reflex angle"
         ],
         "optionsZh": [
-          "锐角（Acute angle）",
-          "钝角（Obtuse angle）",
+          "锐角",
+          "钝角",
           "平角",
           "优角"
         ],
@@ -795,14 +795,14 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionEn": "At exactly 3:00 on the Waterloo Clock Tower, what angle do the hour and minute hands form?",
         "questionZh": "滑铁卢钟楼上的时钟在整 3:00 时，时针与分针形成什么角？",
         "optionsEn": [
-          "Acute angle (< 90°)",
-          "Right angle (90°)",
-          "Obtuse angle (> 90°)",
-          "Straight angle (180°)"
+          "Acute angle",
+          "Right angle",
+          "Obtuse angle",
+          "Straight angle"
         ],
         "optionsZh": [
           "锐角",
-          "直角（90° Right angle）",
+          "直角",
           "钝角",
           "平角"
         ],
@@ -828,7 +828,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "直角",
           "锐角",
-          "钝角（150° Obtuse）",
+          "钝角",
           "平角"
         ],
         "correctIndex": 2,
@@ -876,7 +876,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "Pentagon"
         ],
         "optionsZh": [
-          "长方形（Rectangle）",
+          "长方形",
           "梯形",
           "普通菱形",
           "五边形"
@@ -908,7 +908,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Easy",
         "tierLabelZh": "基础",
         "questionEn": "How many lines of symmetry does a regular square have?",
-        "questionZh": "一个正方形（Square）一共有多少条对称轴？",
+        "questionZh": "一个正方形一共有多少条对称轴？",
         "optionsEn": [
           "2",
           "4",
@@ -917,7 +917,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "2 条",
-          "4 条（水平、垂直、两条对角线）",
+          "4 条",
           "8 条",
           "1 条"
         ],
@@ -944,7 +944,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "风筝形",
           "长方形",
           "梯形",
-          "菱形（Rhombus）"
+          "菱形"
         ],
         "correctIndex": 3,
         "secretClueEn": "A rhombus has 4 equal sides like a diamond shape.",
@@ -960,13 +960,13 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionEn": "A quadrilateral has EXACTLY one pair of parallel sides. What is it?",
         "questionZh": "一个四边形【恰好只有一组】对边互相平行，它叫什么？",
         "optionsEn": [
-          "Trapezoid (Trapezium)",
+          "Trapezoid",
           "Parallelogram",
           "Rectangle",
           "Rhombus"
         ],
         "optionsZh": [
-          "梯形（Trapezoid）",
+          "梯形",
           "平行四边形",
           "长方形",
           "菱形"
@@ -1018,7 +1018,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "1 条",
           "4 条",
-          "2 条（横向中线与纵向中线）",
+          "2 条",
           "0 条"
         ],
         "correctIndex": 2,
@@ -1050,16 +1050,16 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionEn": "When reading coordinates (x, y), which direction do you move first?",
         "questionZh": "在读取网格坐标（x, y）时，我们应该先往哪个方向移动？",
         "optionsEn": [
-          "Along the horizontal x-axis first (across, then up)",
-          "Along the vertical y-axis first (up, then across)",
-          "Diagonally from the top right",
-          "It does not matter"
+          "Along the horizontal x-axis first",
+          "Along the vertical y-axis first",
+          "Diagonally across the grid",
+          "Any direction is fine"
         ],
         "optionsZh": [
-          "先沿水平 x 轴移动（先横着走，再竖着上）",
+          "先沿水平 x 轴移动",
           "先沿垂直 y 轴移动",
-          "从右上角沿对角线走",
-          "随便哪个方向都可以"
+          "沿对角线斜向移动",
+          "任意方向移动都可以"
         ],
         "correctIndex": 0,
         "secretClueEn": "Memory trick: Walk along the hallway (x) before taking the elevator up (y)!",
@@ -1156,7 +1156,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "(1, 0)"
         ],
         "optionsZh": [
-          "(0, 0)（原点 Origin）",
+          "(0, 0)",
           "(1, 1)",
           "(0, 1)",
           "(1, 0)"
@@ -1174,13 +1174,13 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "season": "Autumn Harbor",
     "strandKey": "operations",
     "strandEn": "Multiplication & Division",
-    "strandZh": "阵列模型与翻倍链",
+    "strandZh": "乘法阵列与连续翻倍",
     "titleEn": "Tile Arrays & Doubling Chains",
-    "titleZh": "瓷砖阵列与 2× ➔ 4× ➔ 8× 翻倍心算链",
+    "titleZh": "矩形阵列与连续翻倍心算法",
     "landmark": "St. Jacobs Farmers Market",
-    "landmarkZh": "圣雅各布斯农贸市场",
+    "landmarkZh": "圣雅各布农贸市场",
     "descriptionEn": "Build rectangular arrays and use the 2x -> 4x -> 8x doubling strategy on market apple crates!",
-    "descriptionZh": "通过圣雅各布斯市场的苹果箱阵列，掌握乘法结合律与连续翻倍心算神技！",
+    "descriptionZh": "通过农贸市场水果箱的行列摆放，理解乘法的阵列结构，掌握 2倍、4倍、8倍的连乘心算技巧！",
     "questions": [
       {
         "id": "w9-q1",
@@ -1192,13 +1192,13 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsEn": [
           "8 + 7 = 15, then multiply by 2",
           "Add 8 seven times on your fingers",
-          "2 × 7 = 14, double to 28 (4×7), double again to 56 (8×7)",
+          "2 × 7 = 14, double to 28, double again to 56",
           "10 × 7 = 70, then subtract 8"
         ],
         "optionsZh": [
           "8+7=15，再乘以2",
           "用手指连加 7 个 8",
-          "先算 2×7=14，翻倍得 28 (4×7)，再翻倍得 56 (8×7)",
+          "先算 2×7=14，翻倍得 28，再翻倍得 56",
           "10×7=70，再减去8"
         ],
         "correctIndex": 2,
@@ -1213,7 +1213,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Medium",
         "tierLabelZh": "进阶",
         "questionEn": "St. Jacobs bakery displays muffins in 6 rows with 12 muffins in each row. How many muffins are there?",
-        "questionZh": "圣雅各布斯烘焙坊将松饼摆成 6 排，每排 12 个。一共有多少个松饼？",
+        "questionZh": "农贸市场烘焙坊将松饼摆成 6 排，每排 12 个。一共有多少个松饼？",
         "optionsEn": [
           "60",
           "62",
@@ -1224,7 +1224,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "60 个",
           "62 个",
           "84 个",
-          "72 个（拆十法：60+12）"
+          "72 个"
         ],
         "correctIndex": 3,
         "secretClueEn": "Break 12 into 10 + 2: (6 × 10) + (6 × 2) = 60 + 12.",
@@ -1272,7 +1272,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "宽 8 块，长 12 块",
-          "宽 6 块，长 16 块（6 × 16 = 96，差为 10）",
+          "宽 6 块，长 16 块",
           "宽 4 块，长 24 块",
           "宽 7 块，长 17 块"
         ],
@@ -1298,7 +1298,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "81",
           "64",
-          "72（36 的两倍）",
+          "72",
           "70"
         ],
         "correctIndex": 2,
@@ -1356,15 +1356,15 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionZh": "每个 🌲 图标代表植树 8 棵。米伦伍兹学校共种了 52 棵树，应该如何用图标表示？",
         "optionsEn": [
           "5 full trees and 2 half trees",
-          "6 full trees and one half tree (6.5 icons)",
+          "6 full trees and 1 half tree",
           "7 full trees",
-          "6 full trees exactly"
+          "6 full trees"
         ],
         "optionsZh": [
-          "5 个完整树木图标 + 2 个半棵树",
-          "6 个完整树木图标 + 1 个半棵树图标（6.5个图标）",
-          "7 个完整树木图标",
-          "6 个完整树木图标"
+          "5 个完整图标 + 2 个半棵图标",
+          "6 个完整图标 + 1 个半棵图标",
+          "7 个完整图标",
+          "6 个完整图标"
         ],
         "correctIndex": 1,
         "secretClueEn": "6 × 8 = 48 trees. That leaves 52 - 48 = 4 trees. 4 is half of 8, so half an icon!",
@@ -1378,7 +1378,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Boss",
         "tierLabelZh": "挑战",
         "questionEn": "Find the Range of this data set: 12, 18, 9, 25, 14.",
-        "questionZh": "求这组观鸟记录数据的“极差”（Range）：12, 18, 9, 25, 14。",
+        "questionZh": "求这组观鸟记录数据的极差（最大值减最小值）：12, 18, 9, 25, 14。",
         "optionsEn": [
           "9",
           "25",
@@ -1388,7 +1388,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "9",
           "25",
-          "16（最大值 25 减 最小值 9）",
+          "16",
           "14"
         ],
         "correctIndex": 2,
@@ -1403,7 +1403,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "G4-5 Advanced",
         "tierLabelZh": "拔高",
         "questionEn": "The mean (average) score of 4 math quizzes is 85. If three scores are 80, 90, and 85, what was the fourth score?",
-        "questionZh": "4 次数学小测的平均分（Mean）是 85 分。前三次成绩分别是 80、90、85 分，第四次得了多少分？",
+        "questionZh": "4 次数学小测的平均分是 85 分。前三次成绩分别是 80、90、85 分，第四次得了多少分？",
         "optionsEn": [
           "82",
           "88",
@@ -1428,7 +1428,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Chest Key",
         "tierLabelZh": "宝箱题",
         "questionEn": "What is the Mode of this dataset: 7, 9, 7, 12, 15, 7, 9?",
-        "questionZh": "这组数据的众数（Mode）是多少：7, 9, 7, 12, 15, 7, 9？",
+        "questionZh": "这组数据中出现次数最多的“众数”是多少：7, 9, 7, 12, 15, 7, 9？",
         "optionsEn": [
           "7",
           "9",
@@ -1436,7 +1436,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "15"
         ],
         "optionsZh": [
-          "7（出现次数最多）",
+          "7",
           "9",
           "12",
           "15"
@@ -1456,11 +1456,11 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Multiplication & Division",
     "strandZh": "面积模型与多位数乘法",
     "titleEn": "Area Model Multiplication",
-    "titleZh": "面积模型（Area Model）乘法拆解",
+    "titleZh": "矩形分块面积模型与多位数乘法",
     "landmark": "Waterloo Memorial Recreation Complex",
     "landmarkZh": "滑铁卢纪念休闲中心",
     "descriptionEn": "Decompose 2-digit by 1-digit and 2-digit by 2-digit products into visual rectangular areas!",
-    "descriptionZh": "通过长方形分块面积模型，直观理解两位数乘一位数与多位数乘法！",
+    "descriptionZh": "通过长方形分块面积模型，直观理解两位数与多位数乘法的算理！",
     "questions": [
       {
         "id": "w11-q1",
@@ -1531,7 +1531,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "300, 160, 40, 32"
         ],
         "optionsZh": [
-          "200, 160, 40, 32（总和 432）",
+          "200, 160, 40, 32",
           "200, 80, 40, 32",
           "200, 180, 40, 24",
           "300, 160, 40, 32"
@@ -1557,7 +1557,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "25",
-          "24（12 + 12）",
+          "24",
           "26",
           "28"
         ],
@@ -1621,7 +1621,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "9 R 1"
         ],
         "optionsZh": [
-          "8 余 3 (8 R 3)",
+          "8 余 3",
           "7 余 3",
           "8 余 1",
           "9 余 1"
@@ -1646,10 +1646,10 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "5 vans"
         ],
         "optionsZh": [
-          "6 辆车",
-          "7 辆车（必须进一）",
-          "8 辆车",
-          "5 辆车"
+          "6 辆",
+          "7 辆",
+          "8 辆",
+          "5 辆"
         ],
         "correctIndex": 1,
         "secretClueEn": "50 ÷ 8 = 6 remainder 2. Those remaining 2 students cannot be left behind! You need 6 + 1 = 7 vans.",
@@ -1673,7 +1673,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "11 盒",
           "13 盒",
-          "12 盒（舍去余数）",
+          "12 盒",
           "14 盒"
         ],
         "correctIndex": 2,
@@ -1741,11 +1741,11 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Proportional Reasoning",
     "strandZh": "正比例比率表与倍数放大",
     "titleEn": "Ratio Tables & Market Apple Cider Scaling",
-    "titleZh": "圣雅各布斯苹果汁正比例比率表",
+    "titleZh": "生活中的正比例与比率表 —— 苹果工坊配方缩放",
     "landmark": "St. Jacobs Cider Mill",
-    "landmarkZh": "圣雅各布斯苹果榨汁工坊",
+    "landmarkZh": "圣雅各布农庄工坊",
     "descriptionEn": "Use multiplicative thinking to scale recipes and fill in ratio tables!",
-    "descriptionZh": "运用乘法比例思维，掌握比率表（Ratio Table）的倍数放大与缩小！",
+    "descriptionZh": "运用成倍放大与缩小的比例思维，学会用比率表解决果汁配方与生活购物问题！",
     "questions": [
       {
         "id": "w13-q1",
@@ -1789,7 +1789,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "600 mL",
           "500 mL",
           "1,000 mL",
-          "750 mL（放大 3 倍）"
+          "750 mL"
         ],
         "correctIndex": 3,
         "secretClueEn": "24 pancakes is 3 times 8 (8 × 3 = 24). So multiply milk by 3: 250 × 3 = ?",
@@ -1811,7 +1811,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "$15"
         ],
         "optionsZh": [
-          "$30 加元",
+          "$30",
           "$25",
           "$36",
           "$15"
@@ -1901,7 +1901,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "1 2/4"
         ],
         "optionsZh": [
-          "1 又 3/4 (1 3/4)",
+          "1 又 3/4",
           "2 又 1/4",
           "1 又 1/4",
           "1 又 2/4"
@@ -1943,7 +1943,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Boss",
         "tierLabelZh": "挑战",
         "questionEn": "Which fraction is equivalent to 3/4?",
-        "questionZh": "下列哪个分数与 3/4 等值（Equivalent）？",
+        "questionZh": "下列哪个分数与 3/4 大小相等？",
         "optionsEn": [
           "8/12",
           "6/10",
@@ -1953,7 +1953,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "8/12",
           "6/10",
-          "9/12 (分子分母同乘3)",
+          "9/12",
           "5/8"
         ],
         "correctIndex": 2,
@@ -2001,7 +2001,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "2/5"
         ],
         "optionsZh": [
-          "1/3（最简分数）",
+          "1/3",
           "1/4",
           "4/12",
           "2/5"
@@ -2117,7 +2117,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "4.8",
-          "4.9（中点值）",
+          "4.9",
           "5.0",
           "4.95"
         ],
@@ -2135,16 +2135,16 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionEn": "Which is larger: 0.8 or 0.6?",
         "questionZh": "哪个小数更大：0.8 还是 0.6？",
         "optionsEn": [
-          "They are equal",
-          "0.6",
-          "0.8",
-          "Cannot tell"
+          "0.6 is larger",
+          "Both are equal",
+          "0.8 is larger",
+          "Cannot be compared"
         ],
         "optionsZh": [
-          "两者相等",
-          "0.6",
-          "0.8",
-          "无法确定"
+          "0.6 更大",
+          "两者一样大",
+          "0.8 更大",
+          "无法比较"
         ],
         "correctIndex": 2,
         "secretClueEn": "8 tenths is greater than 6 tenths.",
@@ -2181,7 +2181,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "33, 40"
         ],
         "optionsZh": [
-          "32, 39（每次加7）",
+          "32, 39",
           "30, 35",
           "31, 38",
           "33, 40"
@@ -2233,7 +2233,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "28",
           "30",
-          "31（公式：3n + 1）",
+          "31",
           "34"
         ],
         "correctIndex": 2,
@@ -2259,7 +2259,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "120",
           "90",
           "110",
-          "100（奇数和公式：10 × 10）"
+          "100"
         ],
         "correctIndex": 3,
         "secretClueEn": "Gauss pairing trick: 1 + 19 = 20, 3 + 17 = 20, 5 + 15 = 20... 5 pairs of 20 = 100! Or n × n = 10 × 10.",
@@ -2281,7 +2281,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "50"
         ],
         "optionsZh": [
-          "40（每次减15）",
+          "40",
           "45",
           "35",
           "50"
@@ -2397,7 +2397,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "$1.00",
-          "$1.50 加元",
+          "$1.50",
           "$2.00",
           "$1.25"
         ],
@@ -2539,7 +2539,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "48",
           "72",
           "56",
-          "64（逆向还原）"
+          "64"
         ],
         "correctIndex": 3,
         "secretClueEn": "If 3 parts = 24, then 1 part = 24 ÷ 3 = 8. The whole has 8 parts: 8 × 8 = 64!",
@@ -2593,7 +2593,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Easy",
         "tierLabelZh": "基础",
         "questionEn": "A rectangular garden bed is 8 m long and 5 m wide. What is its Perimeter (distance around)?",
-        "questionZh": "一个长方形菜坛长 8 米，宽 5 米。它的周长（Perimeter）是多少米？",
+        "questionZh": "一个长方形菜坛长 8 米，宽 5 米。它的周长是多少米？",
         "optionsEn": [
           "13 m",
           "40 m",
@@ -2618,7 +2618,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Medium",
         "tierLabelZh": "进阶",
         "questionEn": "What is the Area of the same garden bed (8 m by 5 m)?",
-        "questionZh": "这个菜坛（长 8 米，宽 5 米）的面积（Area）是多少平方米？",
+        "questionZh": "这个菜坛（长 8 米，宽 5 米）的面积是多少平方米？",
         "optionsEn": [
           "48 m²",
           "26 m²",
@@ -2629,7 +2629,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "48 m²",
           "26 m²",
           "80 m²",
-          "40 平方米 (40 m²)"
+          "40 m²"
         ],
         "correctIndex": 3,
         "secretClueEn": "Area = Length × Width. 8 × 5 = 40 square meters.",
@@ -2671,13 +2671,13 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionZh": "用 24 米长的围栏围成一个长方形花园。能围出的【最大可能面积】是多少平方米？",
         "optionsEn": [
           "32 m²",
-          "36 m² (Square: 6m × 6m)",
+          "36 m²",
           "35 m²",
           "40 m²"
         ],
         "optionsZh": [
           "32 m²",
-          "36 平方米（正方形 6m × 6m）",
+          "36 m²",
           "35 m²",
           "40 m²"
         ],
@@ -2703,7 +2703,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "3,000 cm",
           "30 cm",
-          "300 厘米",
+          "300 cm",
           "30,000 cm"
         ],
         "correctIndex": 2,
@@ -2758,7 +2758,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Medium",
         "tierLabelZh": "进阶",
         "questionEn": "A soccer match at RIM Park lasted 75 minutes. It ended at 4:10 PM. What time did it start?",
-        "questionZh": "RIM Park 的一场足球赛持续了 75 分钟，在下午 4:10 结束。比赛是几点开始的？",
+        "questionZh": "RIM Park 体育公园的一场足球赛持续了 75 分钟，在下午 4:10 结束。比赛是几点开始的？",
         "optionsEn": [
           "3:05 PM",
           "2:55 PM",
@@ -2882,15 +2882,15 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "不可能发生",
-          "必定发生（Certain）",
-          "很有可能（Likely）",
+          "必定发生",
+          "很有可能",
           "等可能"
         ],
         "correctIndex": 2,
         "secretClueEn": "9 out of 10 are blue. It is not guaranteed (certain), but very high chance: Likely!",
-        "secretClueZh": "10 颗里有 9 颗是蓝色。虽然不是 100% 必定发生（有微小概率摸到红），但可能性极高，属于“很有可能”（Likely）。",
+        "secretClueZh": "10 颗里有 9 颗是蓝色。虽然不是 100% 必定发生（有微小概率摸到红），但可能性极高，属于“很有可能”。",
         "explanationEn": "9/10 chance is classified as \"Likely\" on the continuum.",
-        "explanationZh": "9/10 的概率属于“很有可能”（Likely）。"
+        "explanationZh": "9/10 的概率属于“很有可能”。"
       },
       {
         "id": "w33-q2",
@@ -2903,17 +2903,17 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "Unlikely",
           "Impossible",
           "Certain",
-          "Equally Likely (50% chance)"
+          "Equally Likely"
         ],
         "optionsZh": [
           "不太可能",
           "不可能发生",
           "必定发生",
-          "等可能（Equally Likely / 50% 机会）"
+          "等可能"
         ],
         "correctIndex": 3,
         "secretClueEn": "Numbers 2, 4, 6 are even (3 numbers). 1, 3, 5 are odd (3 numbers). 3 out of 6 = half = equally likely!",
-        "secretClueZh": "偶数有 3 个，奇数有 3 个，各占一半（3/6 = 50%），是“等可能”（Equally Likely）。",
+        "secretClueZh": "偶数有 3 个，奇数有 3 个，各占一半（3/6 = 50%），是“等可能”。",
         "explanationEn": "3 even numbers vs 3 odd numbers means equal likelihood.",
         "explanationZh": "偶数与奇数机会均等（3/6），为等可能事件。"
       },
@@ -2957,7 +2957,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "6",
-          "7（共有 6 种组合）",
+          "7",
           "8",
           "12"
         ],
@@ -2983,12 +2983,12 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "不太可能",
           "不可能发生",
-          "必定发生（Certain）",
+          "必定发生",
           "等可能"
         ],
         "correctIndex": 2,
         "secretClueEn": "By the laws of nature, it is 100% Certain.",
-        "secretClueZh": "自然界客观规律，必定发生（Certain）。",
+        "secretClueZh": "自然界客观规律，必定发生。",
         "explanationEn": "It is a certainty.",
         "explanationZh": "必定发生。"
       }
@@ -3001,11 +3001,11 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Coding & Movement",
     "strandZh": "编程循环与网格位移",
     "titleEn": "Pseudocode REPEAT Loops & Grid Navigation",
-    "titleZh": "编程 REPEAT 循环嵌套与网格巡航",
+    "titleZh": "编程重复循环嵌套与网格位移",
     "landmark": "Communitech Innovation Hub",
     "landmarkZh": "Communitech 科技创新中心",
     "descriptionEn": "Trace pseudocode algorithms with REPEAT loops and calculate total steps moved on a grid!",
-    "descriptionZh": "追踪伪代码 REPEAT 循环指令，精准推算机器人在网格中的最终坐标与步数！",
+    "descriptionZh": "追踪伪代码中的重复循环指令，精准推算机器人在网格中的最终坐标与步数！",
     "questions": [
       {
         "id": "w35-q1",
@@ -3013,7 +3013,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Easy",
         "tierLabelZh": "基础",
         "questionEn": "How many total steps does this robot move:\nREPEAT 4 times:\n  Move forward 3 steps",
-        "questionZh": "这段机器人代码总共移动了多少步：\nREPEAT 4 times:\n  Move forward 3 steps",
+        "questionZh": "机器人执行以下循环代码，总共移动了多少步：\n重复 4 次 (REPEAT 4 times):\n  向前走 3 步 (Move forward 3 steps)",
         "optionsEn": [
           "16 steps",
           "7 steps",
@@ -3023,7 +3023,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "16 步",
           "7 步",
-          "12 步（4 × 3）",
+          "12 步",
           "10 步"
         ],
         "correctIndex": 2,
@@ -3038,18 +3038,18 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Medium",
         "tierLabelZh": "进阶",
         "questionEn": "A robot starts at (0, 0) facing East. It executes:\nREPEAT 4 times:\n  Move forward 2\n  Turn Left 90°\nWhere does the robot end up?",
-        "questionZh": "机器人从 (0, 0) 朝东出发，执行代码：\nREPEAT 4 times:\n  Move forward 2\n  Turn Left 90°\n机器人最终停在哪里？",
+        "questionZh": "机器人从坐标 (0, 0) 朝东出发，执行以下循环代码：\n重复 4 次 (REPEAT 4 times):\n  向前走 2 步\n  向左转 90°\n机器人最终停在哪个坐标？",
         "optionsEn": [
           "(0, 2)",
           "(2, 2)",
           "(8, 0)",
-          "(0, 0) back at origin"
+          "(0, 0)"
         ],
         "optionsZh": [
           "(0, 2)",
           "(2, 2)",
           "(8, 0)",
-          "(0, 0) 回到起点原点"
+          "(0, 0)"
         ],
         "correctIndex": 3,
         "secretClueEn": "It walks a 2×2 square! 4 turns of 90° completes a full 360° circle back to where it started.",
@@ -3063,7 +3063,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Boss",
         "tierLabelZh": "挑战",
         "questionEn": "Look at this nested loop:\nREPEAT 3 times:\n  REPEAT 2 times:\n    Draw star\n  Move forward 1\nHow many stars are drawn in total?",
-        "questionZh": "观察这个嵌套循环：\nREPEAT 3 times:\n  REPEAT 2 times:\n    Draw star\n  Move forward 1\n总共画了多少颗星星？",
+        "questionZh": "观察这个嵌套循环代码：\n重复 3 次 (REPEAT 3 times):\n  重复 2 次 (REPEAT 2 times):\n    画一颗星星\n  向前走 1 步\n总共画了多少颗星星？",
         "optionsEn": [
           "6 stars",
           "5 stars",
@@ -3071,7 +3071,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "12 stars"
         ],
         "optionsZh": [
-          "6 颗星星 (3 × 2)",
+          "6 颗",
           "5 颗",
           "9 颗",
           "12 颗"
@@ -3117,13 +3117,13 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsEn": [
           "270°",
           "180°",
-          "360° (Full circle)",
+          "360°",
           "90°"
         ],
         "optionsZh": [
           "270°",
           "180°",
-          "360°（刚好一整圈）",
+          "360°",
           "90°"
         ],
         "correctIndex": 2,
@@ -3163,7 +3163,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "$5.25",
           "$6.75",
-          "$5.75 加元",
+          "$5.75",
           "$6.25"
         ],
         "correctIndex": 2,
@@ -3178,7 +3178,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Medium",
         "tierLabelZh": "进阶",
         "questionEn": "How much money is 3 toonies, 4 loonies, and 6 quarters?",
-        "questionZh": "3 枚 Toonie（2元硬币）、4 枚 Loonie（1元硬币）和 6 枚 25分硬币（Quarter）一共是多少钱？",
+        "questionZh": "加拿大硬币换算：3 枚 2元硬币（Toonie）、4 枚 1元硬币（Loonie）和 6 枚 25分硬币（Quarter）一共是多少钱？",
         "optionsEn": [
           "$11.00",
           "$10.50",
@@ -3189,7 +3189,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
           "$11.00",
           "$10.50",
           "$12.00",
-          "$11.50 加元"
+          "$11.50"
         ],
         "correctIndex": 3,
         "secretClueEn": "3 toonies = $6. 4 loonies = $4. 6 quarters = 6 × 25¢ = $1.50. $6 + $4 + $1.50 = $11.50!",
@@ -3205,13 +3205,13 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "questionEn": "Best Buy comparison: Pack A has 4 juice boxes for $6. Pack B has 6 juice boxes for $8.40. Which is the better deal per juice box?",
         "questionZh": "精明消费单价比价：A 套装 4 盒果汁卖 $6；B 套装 6 盒果汁卖 $8.40。哪一款单价更划算？",
         "optionsEn": [
-          "Pack B ($1.40 per box vs $1.50 in Pack A)",
-          "Pack A ($1.50 per box vs $1.60 in Pack B)",
+          "Pack B is a better deal",
+          "Pack A is a better deal",
           "They cost exactly the same per box",
           "Cannot be compared"
         ],
         "optionsZh": [
-          "B 套装更划算（每盒单价 $1.40，比 A 套装的 $1.50 便宜）",
+          "B 套装更划算",
           "A 套装更划算",
           "两款单价完全一样",
           "数量不同无法比较"
@@ -3253,7 +3253,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "Chest Key",
         "tierLabelZh": "宝箱题",
         "questionEn": "How many quarters (25¢) make one Canadian $2 Toonie?",
-        "questionZh": "多少枚 25分硬币可以换一枚 2 加元的 Toonie 硬币？",
+        "questionZh": "多少枚 25分硬币（Quarter）可以兑换一枚 2 加元硬币（Toonie）？",
         "optionsEn": [
           "10 quarters",
           "4 quarters",
@@ -3263,7 +3263,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "optionsZh": [
           "10 枚",
           "4 枚",
-          "8 枚（8 × 25¢ = $2.00）",
+          "8 枚",
           "6 枚"
         ],
         "correctIndex": 2,
@@ -3327,7 +3327,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         ],
         "optionsZh": [
           "38 cm²",
-          "84 平方厘米",
+          "84 cm²",
           "72 cm²",
           "96 cm²"
         ],
@@ -3368,7 +3368,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
         "tierLabelEn": "G4-5 Advanced",
         "tierLabelZh": "拔高",
         "questionEn": "A train left ION Conestoga station at 8:40 AM and arrived at Fairway station at 9:25 AM. The track is 18 km long. What was its average speed in km/h?",
-        "questionZh": "ION 轻轨 8:40 AM 从 Conestoga 站出发，9:25 AM 到达 Fairway 站。全程 18 公里。列车平均时速是多少 km/h？",
+        "questionZh": "滑铁卢轻轨 ION 上午 8:40 从康尼斯托加站（Conestoga）出发，上午 9:25 到达仙道站（Fairway）。全程 18 公里。列车的平均时速是多少 km/h？",
         "optionsEn": [
           "36 km/h",
           "30 km/h",

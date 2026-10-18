@@ -47,7 +47,8 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         String(correctVal),
         String(targetDigit * 1000)
       ];
-      const correctIdx = 2;
+      const shuffled = shuffle(opts);
+      const correctIdx = shuffled.indexOf(String(correctVal));
 
       return {
         id,
@@ -56,8 +57,8 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         tierLabelZh: '基础',
         questionEn: `In the number ${num.toLocaleString()}, what is the value of the digit ${targetDigit}?`,
         questionZh: `在数字 ${num.toLocaleString()} 中，数字 ${targetDigit} 的数值是多少？`,
-        optionsEn: opts,
-        optionsZh: [opts[0], opts[1], `${opts[2]} (百位)`, opts[3]],
+        optionsEn: shuffled,
+        optionsZh: shuffled,
         correctIndex: correctIdx,
         secretClueEn: `The digit ${targetDigit} is in the hundreds column: ${targetDigit} × 100.`,
         secretClueZh: `数字 ${targetDigit} 位于百位（Hundreds）：${targetDigit} × 100。`,
@@ -111,8 +112,14 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
       const opt3 = `${thousands * 10 + hundreds} hundreds + ${tens} tens`;
       const wrongOpt = `${thousands} thousands + ${hundreds * 10} tens + ${tens} ones`; // misses 0s
 
-      const options = [opt1, opt2, opt3, wrongOpt];
-      const correctIndex = 3;
+      const pairs = [
+        { en: opt1, zh: `${thousands} 个千 + ${hundreds} 个百 + ${tens} 个十`, isCorrect: false },
+        { en: opt2, zh: `${thousands - 1} 个千 + ${hundreds + 10} 个百 + ${tens * 10} 个一`, isCorrect: false },
+        { en: opt3, zh: `${thousands * 10 + hundreds} 个百 + ${tens} 个十`, isCorrect: false },
+        { en: wrongOpt, zh: `${thousands} 个千 + ${hundreds * 10} 个十 + ${tens} 个一`, isCorrect: true },
+      ];
+      const shuffled = shuffle(pairs);
+      const correctIndex = shuffled.findIndex(p => p.isCorrect);
 
       return {
         id,
@@ -121,18 +128,13 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         tierLabelZh: '高难挑战',
         questionEn: `Which non-standard decomposition of ${correctTotal.toLocaleString()} is NOT correct?`,
         questionZh: `下面哪一种对 ${correctTotal.toLocaleString()} 的非标准拆解方式是错误的？`,
-        optionsEn: options,
-        optionsZh: [
-          `${thousands} 个千 + ${hundreds} 个百 + ${tens} 个十`,
-          `${thousands - 1} 个千 + ${hundreds + 10} 个百 + ${tens * 10} 个一`,
-          `${thousands * 10 + hundreds} 个百 + ${tens} 个十`,
-          `${thousands} 个千 + ${hundreds * 10} 个十 + ${tens} 个一（不正确）`
-        ],
+        optionsEn: shuffled.map(p => p.en),
+        optionsZh: shuffled.map(p => p.zh),
         correctIndex,
         secretClueEn: `Multiply out the values: ${hundreds * 10} tens = ${hundreds * 100}, but ${tens} ones = only ${tens}!`,
         secretClueZh: `计算实际数值：${hundreds * 10} 个十 = ${hundreds * 100}，但 ${tens} 个一只有 ${tens}，达不到 ${tens * 10}！`,
-        explanationEn: `Option 4 gives ${thousands * 1000 + hundreds * 100 + tens}, which is missing ${(tens * 10) - tens}!`,
-        explanationZh: `选项 4 计算结果为 ${thousands * 1000 + hundreds * 100 + tens}，缺少了 ${(tens * 10) - tens}，因此不正确。`
+        explanationEn: `${wrongOpt} gives ${thousands * 1000 + hundreds * 100 + tens}, which is missing ${(tens * 10) - tens}!`,
+        explanationZh: `该拆解计算结果为 ${thousands * 1000 + hundreds * 100 + tens}，缺少了 ${(tens * 10) - tens}，因此不正确。`
       };
     }
 
@@ -352,10 +354,10 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
       return {
         id,
         tier: 'olympiad',
-        tierLabelEn: 'Olympiad Brain King',
-        tierLabelZh: '终极奥数脑王',
+        tierLabelEn: 'Olympiad Master Mind',
+        tierLabelZh: '思维奥数',
         questionEn: `St. Jacobs Farmers' Market: A student bought maple syrup for $${price1} and artisan cheese for $${price2}. They paid with a $${paid} Canadian bill. Exactly how much change will they receive?`,
-        questionZh: `圣雅各布斯农贸市场：一位学生购买了价值 $${price1} 的枫糖浆和 $${price2} 的手工奶酪，付了一张 $${paid} 加拿大纸币。他们将收到多少找零？`,
+        questionZh: `圣雅各布农贸市场：一位同学购买了价值 $${price1} 的枫糖浆和 $${price2} 的手工奶酪，付了一张 $${paid} 加币纸币。应找零多少钱？`,
         optionsEn: shuffled,
         optionsZh: shuffled,
         correctIndex,

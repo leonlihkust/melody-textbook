@@ -73,7 +73,7 @@ export const QuestMap: React.FC<QuestMapProps> = ({
                 ⚓
               </span>
               <span className="font-comic text-xs font-bold uppercase tracking-wider text-blue-700">
-                Waterloo Region District School Board · Grade 4
+                {lang === 'zh' ? '滑铁卢教育局 · 四年级数学大纲' : 'Waterloo Region District School Board · Grade 4'}
               </span>
               <span className="text-[11px] font-comic font-bold text-amber-900 bg-amber-200/90 border border-amber-400 px-2.5 py-0.5 rounded-full shadow-xs">
                 ❤️ {lang === 'zh' ? '创作者：Yang & Melody' : 'Created by Yang & Melody'}
@@ -86,25 +86,25 @@ export const QuestMap: React.FC<QuestMapProps> = ({
             </h1>
             <p className="text-sm md:text-base text-slate-600 font-medium leading-relaxed mb-3">
               {lang === 'zh'
-                ? '从秋季开学数感到夏季毕业大闯关，40 周每周 5 题夺宝循环，集结滑铁卢轻轨、月桂溪、圣雅各布斯地标！'
+                ? '涵盖秋、冬、春、夏完整学年，精选 40 周滑铁卢生活情境数学探险，融入滑铁卢轻轨、月桂溪自然保护区与农贸市场等本土特色！'
                 : 'Journey through 40 weekly expeditions across Waterloo! Round numbers with the ION LRT, explore geometry at Perimeter Institute, and unlock treasure chests!'}
             </p>
             {/* 4 Difficulty Tiers & Dynamic Variants Feature Badge */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">
-                🟢 {lang === 'zh' ? 'Easy 基础稳固' : 'Easy Foundation'}
+              <span className="text-[11px] font-comic font-bold px-2.5 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">
+                🟢 {lang === 'zh' ? '基础巩固' : 'Foundation'}
               </span>
-              <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-300">
-                🟡 {lang === 'zh' ? 'Medium 核心进阶' : 'Medium Progress'}
+              <span className="text-[11px] font-comic font-bold px-2.5 py-0.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-300">
+                🟡 {lang === 'zh' ? '进阶强化' : 'Intermediate'}
               </span>
-              <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-rose-100 text-rose-800 border border-rose-300">
-                🔴 {lang === 'zh' ? 'Hard 高难挑战' : 'Hard Challenge'}
+              <span className="text-[11px] font-comic font-bold px-2.5 py-0.5 rounded-lg bg-rose-100 text-rose-800 border border-rose-300">
+                🔴 {lang === 'zh' ? '综合挑战' : 'Advanced'}
               </span>
-              <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-purple-100 text-purple-900 border border-purple-400">
-                👑 {lang === 'zh' ? 'Olympiad 终极奥数' : 'Olympiad Master Mind'}
+              <span className="text-[11px] font-comic font-bold px-2.5 py-0.5 rounded-lg bg-purple-100 text-purple-900 border border-purple-400">
+                👑 {lang === 'zh' ? '思维奥数' : 'Olympiad'}
               </span>
-              <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-blue-100 text-blue-900 border border-blue-300">
-                🔄 {lang === 'zh' ? '动态变式题' : 'Dynamic Variations'}
+              <span className="text-[11px] font-comic font-bold px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-900 border border-blue-300">
+                🔄 {lang === 'zh' ? '无限动态题' : 'Dynamic Variations'}
               </span>
             </div>
           </div>
