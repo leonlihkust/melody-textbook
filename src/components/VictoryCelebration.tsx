@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Trophy, Star, Sparkles, RefreshCw, ArrowRight, Award, Compass, CheckCircle2 } from 'lucide-react';
 import { playChestFanfare, playClickSound, playCorrectSound } from '../utils/audio';
+import { MarinerTrophy3D } from './MarinerTrophy3D';
 
 interface VictoryCelebrationProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
 }) => {
   const [chestOpened, setChestOpened] = useState(false);
   const [starsRevealed, setStarsRevealed] = useState(0);
+  const [show3dTrophy, setShow3dTrophy] = useState(true);
 
   // Trigger grand victory fireworks and audio sequence upon opening
   useEffect(() => {
@@ -142,35 +144,60 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
 
       {/* Main Celebration Card */}
       <div className="bg-white comic-box-lg rounded-3xl max-w-lg w-full p-6 sm:p-8 text-center relative z-10 animate-in zoom-in-95 bg-halftone-gold shadow-2xl border-4 border-slate-900">
-        {/* Animated Chest & Trophy Central Stage */}
-        <div className="relative w-36 h-36 mx-auto mb-4 flex items-center justify-center">
-          {/* Light Glow Aura */}
-          <div className="absolute inset-0 bg-amber-400 rounded-full blur-xl opacity-60 animate-pulse" />
-
-          {/* Treasure Chest or Trophy */}
-          <div
-            className={`w-32 h-32 rounded-3xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 border-4 border-slate-900 comic-box flex flex-col items-center justify-center transition-all duration-700 ${
-              chestOpened ? 'scale-105 rotate-2' : 'scale-95 animate-bounce'
-            }`}
+        {/* 3D vs 2D Trophy Mode Toggle */}
+        <div className="flex justify-center mb-2">
+          <button
+            onClick={() => {
+              if (soundEnabled) playClickSound();
+              setShow3dTrophy(v => !v);
+            }}
+            className="px-3 py-1 bg-amber-100 hover:bg-amber-200 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-slate-900 flex items-center gap-1.5 shadow-sm transition-all"
           >
-            <span className="text-6xl drop-shadow-md transition-transform duration-500 transform hover:scale-125">
-              {chestOpened ? '🏆' : '🎁'}
-            </span>
-            <span className="font-comic text-[11px] font-bold text-slate-900 bg-white/90 px-2 py-0.5 rounded-full border border-slate-900 mt-1 shadow-sm">
-              {chestOpened ? 'VICTORY!' : 'OPENING...'}
-            </span>
-          </div>
-
-          {/* Flying Gems & Coins Burst */}
-          {chestOpened && (
-            <>
-              <span className="absolute -top-3 -left-3 text-2xl animate-bounce">🪙</span>
-              <span className="absolute -top-4 -right-3 text-2xl animate-pulse">💎</span>
-              <span className="absolute -bottom-2 -left-4 text-2xl animate-bounce">⭐</span>
-              <span className="absolute -bottom-3 -right-3 text-2xl animate-pulse">✨</span>
-            </>
-          )}
+            <Sparkles size={13} className="text-amber-600" />
+            <span>{show3dTrophy ? (lang === 'zh' ? '切换 2D 宝箱' : 'View 2D Chest') : (lang === 'zh' ? '✨ 开启 3D 金舵奖杯' : '✨ 3D Mariner Trophy')}</span>
+          </button>
         </div>
+
+        {/* Animated Chest & 3D Trophy Central Stage */}
+        {show3dTrophy ? (
+          <div className="mb-2">
+            <MarinerTrophy3D
+              title={lang === 'zh' ? '水手金舵奥数奖杯' : 'Mariner Golden Helm Trophy'}
+              subtitle={lang === 'zh' ? '四年级数学闯关大获全胜' : 'Grade 4 Math Stage Complete'}
+              starsCount={starsEarned}
+              interactive={true}
+            />
+          </div>
+        ) : (
+          <div className="relative w-36 h-36 mx-auto mb-4 flex items-center justify-center">
+            {/* Light Glow Aura */}
+            <div className="absolute inset-0 bg-amber-400 rounded-full blur-xl opacity-60 animate-pulse" />
+
+            {/* Treasure Chest or Trophy */}
+            <div
+              className={`w-32 h-32 rounded-3xl bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 border-4 border-slate-900 comic-box flex flex-col items-center justify-center transition-all duration-700 ${
+                chestOpened ? 'scale-105 rotate-2' : 'scale-95 animate-bounce'
+              }`}
+            >
+              <span className="text-6xl drop-shadow-md transition-transform duration-500 transform hover:scale-125">
+                {chestOpened ? '🏆' : '🎁'}
+              </span>
+              <span className="font-comic text-[11px] font-bold text-slate-900 bg-white/90 px-2 py-0.5 rounded-full border border-slate-900 mt-1 shadow-sm">
+                {chestOpened ? 'VICTORY!' : 'OPENING...'}
+              </span>
+            </div>
+
+            {/* Flying Gems & Coins Burst */}
+            {chestOpened && (
+              <>
+                <span className="absolute -top-3 -left-3 text-2xl animate-bounce">🪙</span>
+                <span className="absolute -top-4 -right-3 text-2xl animate-pulse">💎</span>
+                <span className="absolute -bottom-2 -left-4 text-2xl animate-bounce">⭐</span>
+                <span className="absolute -bottom-3 -right-3 text-2xl animate-pulse">✨</span>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Honor Badge Banner */}
         <div className={`inline-block px-4 py-1.5 rounded-2xl bg-gradient-to-r ${honor.color} text-white font-comic text-xs sm:text-sm font-bold uppercase tracking-wider shadow-md mb-2 border-2 border-slate-900`}>

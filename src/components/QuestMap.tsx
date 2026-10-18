@@ -92,19 +92,19 @@ export const QuestMap: React.FC<QuestMapProps> = ({
             {/* 4 Difficulty Tiers & Dynamic Variants Feature Badge */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300">
-                🟢 Easy 基础
+                🟢 {lang === 'zh' ? 'Easy 基础稳固' : 'Easy Foundation'}
               </span>
               <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-300">
-                🟡 Medium 进阶
+                🟡 {lang === 'zh' ? 'Medium 核心进阶' : 'Medium Progress'}
               </span>
               <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-rose-100 text-rose-800 border border-rose-300">
-                🔴 Hard 挑战
+                🔴 {lang === 'zh' ? 'Hard 高难挑战' : 'Hard Challenge'}
               </span>
               <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-purple-100 text-purple-900 border border-purple-400">
-                👑 Olympiad 最难奥数脑王
+                👑 {lang === 'zh' ? 'Olympiad 终极奥数' : 'Olympiad Master Mind'}
               </span>
               <span className="text-[11px] font-comic font-bold px-2 py-0.5 rounded-lg bg-blue-100 text-blue-900 border border-blue-300">
-                🔄 题目动态变式
+                🔄 {lang === 'zh' ? '动态变式题' : 'Dynamic Variations'}
               </span>
             </div>
           </div>

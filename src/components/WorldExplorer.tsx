@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Volume2, VolumeX, Award, ArrowLeft, ArrowRight, CheckCircle2, XCircle, Sparkles, Globe, Compass } from 'lucide-react';
 import { WorldCountry, WORLD_COUNTRIES } from '../data/worldData';
+import { COUNTRY_LANDMARKS } from '../data/landmarkData';
 import { CountryIllustration } from './CountryIllustration';
+import { Globe3D } from './Globe3D';
 import { playCorrectSound, playClueSound, playClickSound, speakEnglish, stopSpeaking } from '../utils/audio';
 
 interface WorldExplorerProps {
@@ -18,6 +20,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   unlockedBadges,
   onUnlockBadge,
 }) => {
+  const [viewMode, setViewMode] = useState<'globe' | 'card'>('globe');
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [activeTab, setActiveTab] = useState<'fact' | 'quiz'>('fact');
   const [selectedOpt, setSelectedOpt] = useState<number | null>(null);
@@ -138,30 +141,85 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
           </div>
         </div>
 
-        {/* Region Filter Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 mt-5 pt-4 border-t border-amber-200">
-          {['All', 'Americas', 'Europe', 'Asia', 'Africa', 'Oceania', 'Polar'].map(cat => (
+        {/* View Switcher & Region Filter Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-5 pt-4 border-t border-amber-200">
+          {/* Mode Switcher: 3D Globe vs Classic Passport */}
+          <div className="flex items-center gap-1.5 bg-amber-200/80 p-1 rounded-2xl border-2 border-slate-900 shadow-sm">
             <button
-              key={cat}
               onClick={() => {
                 if (soundEnabled) playClickSound();
-                setCategoryFilter(cat);
-                setSelectedIdx(0);
-                setActiveTab('fact');
-                setSelectedOpt(null);
-                setIsAnswered(false);
+                setViewMode('globe');
               }}
-              className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
-                categoryFilter === cat
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-white/80 hover:bg-white text-slate-700 border border-slate-300'
+              className={`px-3 py-1.5 rounded-xl font-comic text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'globe'
+                  ? 'bg-blue-600 text-white shadow-comic border-2 border-slate-900'
+                  : 'text-slate-800 hover:text-slate-950'
               }`}
             >
-              {cat}
+              <Compass size={14} className={viewMode === 'globe' ? 'animate-spin-slow text-amber-300' : ''} />
+              <span>{lang === 'zh' ? '🌍 3D 航海地球仪' : '🌍 3D Mariner Globe'}</span>
             </button>
-          ))}
+            <button
+              onClick={() => {
+                if (soundEnabled) playClickSound();
+                setViewMode('card');
+              }}
+              className={`px-3 py-1.5 rounded-xl font-comic text-xs font-bold transition-all flex items-center gap-1.5 ${
+                viewMode === 'card'
+                  ? 'bg-amber-400 text-slate-950 shadow-comic border-2 border-slate-900'
+                  : 'text-slate-800 hover:text-slate-950'
+              }`}
+            >
+              <span>{lang === 'zh' ? '🗂️ 护照卡片集' : '🗂️ Passport Cards'}</span>
+            </button>
+          </div>
+
+          {/* Region Filter Buttons */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {['All', 'Americas', 'Europe', 'Asia', 'Africa', 'Oceania', 'Polar'].map(cat => (
+              <button
+                key={cat}
+                onClick={() => {
+                  if (soundEnabled) playClickSound();
+                  setCategoryFilter(cat);
+                  setSelectedIdx(0);
+                  setActiveTab('fact');
+                  setSelectedOpt(null);
+                  setIsAnswered(false);
+                }}
+                className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
+                  categoryFilter === cat
+                    ? 'bg-slate-900 text-white shadow-sm'
+                    : 'bg-white/80 hover:bg-white text-slate-700 border border-slate-300'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* 3D Interactive Earth Globe Section */}
+      {viewMode === 'globe' && (
+        <div className="mb-6 animate-in fade-in zoom-in-95 duration-200">
+          <Globe3D
+            lang={lang}
+            soundEnabled={soundEnabled}
+            unlockedBadges={unlockedBadges}
+            selectedCountry={currentCountry}
+            onSelectCountry={country => {
+              const idx = filteredCountries.findIndex(c => c.id === country.id);
+              if (idx !== -1) {
+                setSelectedIdx(idx);
+              }
+              setActiveTab('fact');
+              setSelectedOpt(null);
+              setIsAnswered(false);
+            }}
+          />
+        </div>
+      )}
 
       {/* Main Single Country Fact Card ("一页一个 Fun Fact") */}
       <div className="bg-white comic-box-lg rounded-3xl p-6 md:p-8 relative bg-halftone mb-6">
@@ -252,7 +310,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             {/* Giant Comic Fact Box */}
             <div className="bg-amber-50/80 border-2 border-slate-900 rounded-3xl p-6 md:p-8 shadow-comic relative mb-6">
               <span className="absolute -top-3.5 left-6 bg-amber-400 border-2 border-slate-900 text-slate-900 px-3 py-0.5 rounded-full font-comic text-xs font-bold uppercase tracking-wider">
-                🌟 Did You Know? · 你知道吗？
+                {lang === 'zh' ? '🌟 你知道吗？· Fun Fact' : '🌟 Did You Know?'}
               </span>
 
               <p className="font-comic text-lg md:text-xl font-bold text-slate-900 leading-relaxed mb-4">
@@ -265,6 +323,50 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                 </p>
               )}
             </div>
+
+            {/* Landmark Showcase Box */}
+            {COUNTRY_LANDMARKS[currentCountry.id] && (() => {
+              const landmark = COUNTRY_LANDMARKS[currentCountry.id];
+              return (
+                <div className="bg-white border-2 border-slate-900 rounded-3xl p-5 md:p-6 shadow-comic mb-6">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b-2 border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl drop-shadow-sm">{landmark.icon}</span>
+                      <div>
+                        <div className="text-[11px] font-comic font-bold uppercase tracking-wider text-amber-700 flex items-center gap-1">
+                          <span>🏛️ {lang === 'zh' ? '国家标志性建筑与地标' : 'Iconic Landmark & Monument'}</span>
+                        </div>
+                        <h3 className="font-comic text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
+                          {lang === 'zh' ? landmark.nameZh : landmark.nameEn}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-300 font-comic text-xs font-bold text-slate-700">
+                        📍 {lang === 'zh' ? landmark.cityZh : landmark.cityEn}
+                      </span>
+                      <span className="px-2.5 py-1 rounded-xl bg-amber-100 border border-amber-300 font-comic text-xs font-bold text-amber-900">
+                        📏 {landmark.heightOrScale}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs md:text-sm text-slate-700 leading-relaxed mb-3">
+                    {lang === 'zh' ? landmark.descZh : landmark.descEn}
+                  </p>
+
+                  <div className="p-3.5 rounded-2xl bg-amber-50/90 border-2 border-amber-200 text-xs text-amber-950">
+                    <div className="font-comic font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+                      <Sparkles size={13} className="text-amber-600" />
+                      <span>{lang === 'zh' ? '🌟 建筑力学与历史秘闻：' : '🌟 Architectural Secret: '}</span>
+                    </div>
+                    <p className="leading-relaxed">
+                      {lang === 'zh' ? landmark.architecturalFactZh : landmark.architecturalFactEn}
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Unlock Badge Preview Prompt */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-blue-50 p-4 rounded-2xl border border-blue-200">

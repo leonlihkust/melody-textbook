@@ -7,6 +7,8 @@ import { QuestionRunner } from './components/QuestionRunner';
 import { WorldExplorer } from './components/WorldExplorer';
 import { Scratchpad } from './components/Scratchpad';
 import { ShareModal } from './components/ShareModal';
+import { MarinerAiBuddy } from './components/MarinerAiBuddy';
+import { MarinerTrophy3D } from './components/MarinerTrophy3D';
 import { playClickSound } from './utils/audio';
 
 type ActiveView = 'map' | 'runner' | 'world' | 'badges' | 'about';
@@ -226,11 +228,15 @@ export default function App() {
           {/* Bilingual EN / ZH Toggle */}
           <button
             onClick={toggleLanguage}
-            className="comic-btn px-3 py-1.5 bg-amber-300 hover:bg-amber-400 text-slate-900 font-comic text-xs font-bold rounded-xl flex items-center gap-1"
-            title="Toggle Language"
+            className="comic-btn px-2.5 py-1.5 bg-amber-300 hover:bg-amber-400 text-slate-900 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
+            title={lang === 'en' ? 'Switch to Chinese / 切换为中文' : 'Switch to English / 切换为英文'}
           >
             <Globe size={14} />
-            <span>{lang === 'en' ? '🌐 中文' : '🌐 EN'}</span>
+            <span className="flex items-center gap-1">
+              <span className={lang === 'en' ? 'font-extrabold text-blue-900 underline' : 'opacity-60'}>EN</span>
+              <span className="opacity-40">/</span>
+              <span className={lang === 'zh' ? 'font-extrabold text-blue-900 underline' : 'opacity-60'}>中文</span>
+            </span>
           </button>
 
           {/* Share Link Button */}
@@ -340,7 +346,7 @@ export default function App() {
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-3xl">{getRank().icon}</span>
                     <span className="font-comic text-xs font-bold uppercase tracking-wider text-amber-800">
-                      Mariner Naval Rank · 当前水手头衔
+                      {lang === 'zh' ? '水手荣誉军衔 · Mariner Rank' : 'Mariner Naval Rank'}
                     </span>
                   </div>
                   <h1 className="font-comic text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
@@ -364,6 +370,32 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* 3D Fleet Mariner Helm Trophy Card */}
+            <div className="bg-white comic-box rounded-3xl p-6 mb-8 text-center bg-radial from-amber-50 via-white to-amber-50/50">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">🏆</span>
+                    <h2 className="font-comic text-xl font-bold text-slate-900">
+                      {lang === 'zh' ? '3D 水手舰队终身黄金金舵' : '3D Mariner Fleet Golden Helm'}
+                    </h2>
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium">
+                    {lang === 'zh' ? '悬停、倾斜或点击可 360° 检阅你的专属 3D 荣誉金舵！' : 'Interactive procedural 3D trophy! Hover and tilt to inspect in 360°.'}
+                  </p>
+                </div>
+                <span className="px-3 py-1 rounded-xl bg-blue-100 border border-blue-400 font-comic text-xs font-bold text-blue-900 shrink-0">
+                  WebGL · Three.js 3D
+                </span>
+              </div>
+              <MarinerTrophy3D
+                title="Fleet Mariner Helm"
+                subtitle="Grade 4 Math Honors"
+                starsCount={totalStars}
+                interactive={true}
+              />
             </div>
 
             {/* Country Badges Showcase */}
@@ -555,20 +587,35 @@ export default function App() {
         soundEnabled={soundEnabled}
       />
 
-      {/* Persistent Floating Scratchpad Trigger (When drawer is closed) */}
+      {/* Persistent Floating Scratchpad Trigger (Bottom Left) */}
       {!isScratchpadOpen && (
         <button
           onClick={() => {
             if (soundEnabled) playClickSound();
             setIsScratchpadOpen(true);
           }}
-          className="fixed bottom-5 right-5 z-40 comic-btn px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-comic font-bold text-sm rounded-2xl flex items-center gap-2 shadow-comic-lg"
+          className="fixed bottom-5 left-5 z-40 comic-btn px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center gap-2 shadow-comic-lg"
           title="Open Scratchpad"
         >
           <Pencil size={18} />
           <span>{lang === 'zh' ? '演算草稿板' : 'Scratchpad'}</span>
         </button>
       )}
+
+      {/* Floating Gemini AI Learning Buddy (Bottom Right) */}
+      <MarinerAiBuddy
+        lang={lang}
+        soundEnabled={soundEnabled}
+        currentContext={
+          activeView === 'runner' && selectedWeek
+            ? `Week ${selectedWeek.week}: ${selectedWeek.titleEn} (${selectedWeek.strandEn})`
+            : activeView === 'world'
+            ? 'World Explorer Passport'
+            : activeView === 'badges'
+            ? 'Mariner Badge Vault & 3D Trophy'
+            : '40-Week Math Expedition Map'
+        }
+      />
 
       {/* Minimal Anti-Slop Footer */}
       <footer className="border-t-2 border-slate-900 bg-white py-6 px-4 text-center select-none">

@@ -100,8 +100,12 @@ export const CountryIllustration: React.FC<CountryIllustrationProps> = ({ countr
             {/* Sticky Rice Ceramic Bowl Feature Callout */}
             <g transform="translate(50, 155)">
               <rect x="0" y="0" width="95" height="52" rx="12" fill="#ffffff" stroke="#0f172a" strokeWidth="2" />
-              <text x="10" y="22" fontFamily="Fredoka" fontSize="13" fontWeight="bold" fill="#0f172a">🍚 糯米灰浆</text>
-              <text x="10" y="40" fontFamily="Fredoka" fontSize="10" fontWeight="bold" fill="#b45309">Sticky Rice Power</text>
+              <text x="10" y="22" fontFamily="Fredoka" fontSize="12" fontWeight="bold" fill="#0f172a">
+                {lang === 'zh' ? '🍚 糯米灰浆' : '🍚 Sticky Rice'}
+              </text>
+              <text x="10" y="40" fontFamily="Fredoka" fontSize="10" fontWeight="bold" fill="#b45309">
+                {lang === 'zh' ? '长城古建奇迹' : 'Ancient Mortar'}
+              </text>
             </g>
           </svg>
 
@@ -311,7 +315,9 @@ export const CountryIllustration: React.FC<CountryIllustrationProps> = ({ countr
             <g transform="translate(420, 55)">
               <rect x="0" y="0" width="115" height="135" rx="16" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" />
               <text x="14" y="32" fontFamily="Fredoka" fontSize="16" fontWeight="bold" fill="#ef4444">⬆ +15 cm</text>
-              <text x="14" y="52" fontFamily="Fredoka" fontSize="11" fontWeight="bold" fill="#0f172a">夏日长高 15cm</text>
+              <text x="14" y="52" fontFamily="Fredoka" fontSize="11" fontWeight="bold" fill="#0f172a">
+                {lang === 'zh' ? '夏日长高 15cm' : 'Expands in Sun'}
+              </text>
               <line x1="14" y1="70" x2="100" y2="70" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4 3" />
               <text x="14" y="90" fontFamily="Fredoka" fontSize="10" fill="#475569">Thermal</text>
               <text x="14" y="105" fontFamily="Fredoka" fontSize="10" fill="#475569">Expansion</text>
@@ -678,7 +684,9 @@ export const CountryIllustration: React.FC<CountryIllustrationProps> = ({ countr
             <g transform="translate(390, 100)">
               <rect x="0" y="0" width="75" height="80" rx="16" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" />
               <text x="18" y="58" fontSize="46">♞</text>
-              <text x="16" y="74" fontFamily="Fredoka" fontSize="9" fontWeight="bold" fill="#0f172a">CHESS 象棋</text>
+              <text x="16" y="74" fontFamily="Fredoka" fontSize="9" fontWeight="bold" fill="#0f172a">
+                {lang === 'zh' ? 'CHESS 国际象棋' : 'CHESS ORIGIN'}
+              </text>
             </g>
           </svg>
 

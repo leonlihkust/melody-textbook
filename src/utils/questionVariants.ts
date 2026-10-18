@@ -302,14 +302,15 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
       const remainder = totalStudents % teamSize;
       const neededForNext = remainder === 0 ? 0 : teamSize - remainder;
 
-      const correctAns = `${fullTeams} full teams, need ${neededForNext} more students`;
-      const dist1 = `${fullTeams + 1} full teams, ${remainder} left`;
-      const dist2 = `${fullTeams} full teams, need ${remainder} more`;
-      const dist3 = `${fullTeams - 1} full teams, need 1 more`;
-
-      const options = [correctAns, dist1, dist2, dist3];
-      const shuffled = shuffle(options);
-      const correctIndex = shuffled.indexOf(correctAns);
+      const pairs = [
+        { en: `${fullTeams} full teams, need ${neededForNext} more students`, zh: `${fullTeams} 支满员队，还需 ${neededForNext} 人凑新队` },
+        { en: `${fullTeams + 1} full teams, ${remainder} left`, zh: `${fullTeams + 1} 支队，剩余 ${remainder} 人` },
+        { en: `${fullTeams} full teams, need ${remainder} more`, zh: `${fullTeams} 支满员队，还需 ${remainder} 人` },
+        { en: `${fullTeams - 1} full teams, need 1 more`, zh: `${fullTeams - 1} 支队，差 1 人` }
+      ];
+      const correctPair = pairs[0];
+      const shuffledPairs = shuffle(pairs);
+      const correctIndex = shuffledPairs.findIndex(p => p.en === correctPair.en);
 
       return {
         id,
@@ -318,14 +319,9 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         tierLabelZh: '终极奥数脑王',
         questionEn: `RIM Park Field Day: ${totalStudents} students are forming soccer teams of exactly ${teamSize} players. How many full teams can be formed, and how many MORE students are needed to form one more complete team?`,
         questionZh: `RIM 公园运动会：${totalStudents} 名学生要组成每队恰好 ${teamSize} 人的足球队。最多可以组成多少支完整队伍？还需要多少名学生才能再凑齐一支完整队伍？`,
-        optionsEn: shuffled,
-        optionsZh: [
-          `${fullTeams} 支满员队，还需 ${neededForNext} 人凑新队`,
-          `${fullTeams + 1} 支队，剩余 ${remainder} 人`,
-          `${fullTeams} 支满员队，还需 ${remainder} 人`,
-          `${fullTeams - 1} 支队，差 1 人`
-        ],
-        correctIndex: 0,
+        optionsEn: shuffledPairs.map(p => p.en),
+        optionsZh: shuffledPairs.map(p => p.zh),
+        correctIndex,
         secretClueEn: `Divide ${totalStudents} ÷ ${teamSize}: quotient is full teams, remainder tells you how many are left. Next team needs: ${teamSize} - remainder.`,
         secretClueZh: `计算 ${totalStudents} ÷ ${teamSize}：商为完整队数，余数 ${remainder} 为剩余人数。再凑一队需要：${teamSize} - ${remainder} = ${neededForNext} 人。`,
         explanationEn: `${totalStudents} ÷ ${teamSize} = ${fullTeams} R ${remainder}. To complete the next team of ${teamSize}, we need ${neededForNext} more students!`,
@@ -381,14 +377,15 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
       const width = (adjustedPerimeter - 2 * length) / 2;
       const area = length * width;
 
-      const correctAns = `${area} m² (Width: ${width} m)`;
-      const dist1 = `${area + 10} m²`;
-      const dist2 = `${length * 2 + width} m²`;
-      const dist3 = `${adjustedPerimeter * 2} m²`;
-
-      const options = [correctAns, dist1, dist2, dist3];
-      const shuffled = shuffle(options);
-      const correctIndex = shuffled.indexOf(correctAns);
+      const pairs = [
+        { en: `${area} m² (Width: ${width} m)`, zh: `${area} 平方米（宽为 ${width} 米）` },
+        { en: `${area + 10} m²`, zh: `${area + 10} 平方米` },
+        { en: `${length * 2 + width} m²`, zh: `${length * 2 + width} 平方米` },
+        { en: `${adjustedPerimeter * 2} m²`, zh: `${adjustedPerimeter * 2} 平方米` }
+      ];
+      const correctPair = pairs[0];
+      const shuffledPairs = shuffle(pairs);
+      const correctIndex = shuffledPairs.findIndex(p => p.en === correctPair.en);
 
       return {
         id,
@@ -397,14 +394,9 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         tierLabelZh: '终极奥数脑王',
         questionEn: `Millen Woods Community Garden: A rectangular garden has a perimeter of ${adjustedPerimeter} meters. If its length is ${length} meters, what is the AREA of the garden?`,
         questionZh: `米伦伍兹社区花园：一个长方形花园的周长是 ${adjustedPerimeter} 米。如果已知它的长是 ${length} 米，这个花园的面积是多少？`,
-        optionsEn: shuffled,
-        optionsZh: [
-          `${area} 平方米（宽为 ${width} 米）`,
-          `${area + 10} 平方米`,
-          `${length * 2 + width} 平方米`,
-          `${adjustedPerimeter * 2} 平方米`
-        ],
-        correctIndex: 0,
+        optionsEn: shuffledPairs.map(p => p.en),
+        optionsZh: shuffledPairs.map(p => p.zh),
+        correctIndex,
         secretClueEn: `Perimeter = 2 × (Length + Width). Half perimeter = ${adjustedPerimeter / 2}. Width = ${adjustedPerimeter / 2} - ${length} = ${width}. Area = Length × Width.`,
         secretClueZh: `周长 = 2 × (长 + 宽)。半周长 = ${adjustedPerimeter / 2}。宽 = ${adjustedPerimeter / 2} - ${length} = ${width} 米。面积 = 长 × 宽 = ${length} × ${width}。`,
         explanationEn: `Width = (${adjustedPerimeter} - 2 × ${length}) ÷ 2 = ${width} m. Area = ${length} × ${width} = ${area} m²!`,
