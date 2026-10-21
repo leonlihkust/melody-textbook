@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
-import { Volume2, VolumeX, Sparkles, HelpCircle, ArrowRight, RotateCcw, CheckCircle2, XCircle, Award, Trophy, RefreshCw, Zap } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, HelpCircle, ArrowRight, CheckCircle2, XCircle, RefreshCw, Zap } from 'lucide-react';
 import { WeekTopic, QuestionItem, DifficultyTier } from '../data/mathData';
-import { getQuestionsForTier, generateQuestionVariant } from '../utils/questionVariants';
+import { getQuestionsForTier } from '../utils/questionVariants';
 import { VictoryCelebration } from './VictoryCelebration';
-import { playCorrectSound, playClueSound, playChestFanfare, playClickSound, speakEnglish, stopSpeaking } from '../utils/audio';
+import { playCorrectSound, playClueSound, playClickSound, speakText, stopSpeaking } from '../utils/audio';
+import { I18N, Language } from '../utils/i18n';
 
 interface QuestionRunnerProps {
   topic: WeekTopic;
-  lang: 'en' | 'zh';
+  lang: Language;
   soundEnabled: boolean;
   onFinishStage: (starsEarned: number, weekNumber: number) => void;
   onBackToMap: () => void;
@@ -23,9 +24,9 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
   onBackToMap,
   onOpenScratchpad,
 }) => {
-  // Difficulty Mode: 'all' (progressive) or specific tier ('easy' | 'med' | 'boss' | 'olympiad')
   const [tierMode, setTierMode] = useState<'all' | DifficultyTier>('all');
   const [variantSeed, setVariantSeed] = useState<number>(0);
+  const t = I18N[lang].runner;
 
   // Active question set calculated based on tier mode and variant seed
   const questions: QuestionItem[] = useMemo(() => {
@@ -42,6 +43,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
         ...q,
         optionsEn: indices.map(i => q.optionsEn[i]),
         optionsZh: indices.map(i => q.optionsZh[i]),
+        optionsFr: q.optionsFr ? indices.map(i => q.optionsFr![i]) : undefined,
         correctIndex: indices.indexOf(q.correctIndex),
       };
     });
@@ -60,6 +62,17 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
 
   const currentQ: QuestionItem = questions[currentIdx] || questions[0];
 
+  // Multilingual question texts
+  const displayQuestion = lang === 'fr' ? (currentQ.questionFr || currentQ.questionEn) : lang === 'zh' ? currentQ.questionZh : currentQ.questionEn;
+  const secondaryQuestion = lang !== 'en' ? currentQ.questionEn : null;
+  const displayOptions = lang === 'fr' ? (currentQ.optionsFr || currentQ.optionsEn) : lang === 'zh' ? currentQ.optionsZh : currentQ.optionsEn;
+  const displayClue = lang === 'fr' ? (currentQ.secretClueFr || currentQ.secretClueEn) : lang === 'zh' ? currentQ.secretClueZh : currentQ.secretClueEn;
+  const displayExplanation = lang === 'fr' ? (currentQ.explanationFr || currentQ.explanationEn) : lang === 'zh' ? currentQ.explanationZh : currentQ.explanationEn;
+
+  const topicTitle = lang === 'fr' ? (topic.titleFr || topic.titleEn) : lang === 'zh' ? topic.titleZh : topic.titleEn;
+  const topicStrand = lang === 'fr' ? (topic.strandFr || topic.strandEn) : lang === 'zh' ? topic.strandZh : topic.strandEn;
+  const topicLandmark = lang === 'fr' ? (topic.landmarkFr || topic.landmark) : lang === 'zh' ? topic.landmarkZh : topic.landmark;
+
   const handleSpeak = () => {
     if (isSpeaking) {
       stopSpeaking();
@@ -67,9 +80,9 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
       return;
     }
 
-    const text = `${currentQ.questionEn}. Options: A: ${currentQ.optionsEn[0]}. B: ${currentQ.optionsEn[1]}. C: ${currentQ.optionsEn[2]}. D: ${currentQ.optionsEn[3]}.`;
+    const text = `${displayQuestion}. A: ${displayOptions[0]}. B: ${displayOptions[1]}. C: ${displayOptions[2]}. D: ${displayOptions[3]}.`;
     setIsSpeaking(true);
-    speakEnglish(text, () => setIsSpeaking(false));
+    speakText(text, lang, () => setIsSpeaking(false));
   };
 
   const handleSelectOption = (idx: number) => {
@@ -179,15 +192,12 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
     setCorrectFirstTryCount(0);
   };
 
-  // Level up difficulty from victory celebration
   const handleTryHigherDifficulty = () => {
     setShowVictoryCelebration(false);
-    const order: Array<'all' | DifficultyTier> = ['all', 'easy', 'med', 'boss', 'olympiad'];
-    const nextIdx = Math.min(order.indexOf(tierMode) + 1, order.length - 1);
-    handleSelectTierMode(order[nextIdx]);
+    handleSelectTierMode('olympiad');
   };
 
-  const getTierColor = (tier: string) => {
+  const getTierColor = (tier: DifficultyTier) => {
     switch (tier) {
       case 'easy':
         return 'bg-emerald-100 text-emerald-800 border-emerald-400';
@@ -196,10 +206,16 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
       case 'boss':
         return 'bg-rose-100 text-rose-800 border-rose-400';
       case 'olympiad':
-        return 'bg-purple-100 text-purple-800 border-purple-400 font-bold';
+        return 'bg-purple-100 text-purple-900 border-purple-400';
       default:
         return 'bg-slate-100 text-slate-800 border-slate-400';
     }
+  };
+
+  const getTierLabel = (q: QuestionItem) => {
+    if (lang === 'fr') return q.tierLabelFr || (q.tier === 'easy' ? 'Facile' : q.tier === 'med' ? 'Moyen' : q.tier === 'boss' ? 'Défi' : 'Olympiade');
+    if (lang === 'zh') return q.tierLabelZh;
+    return q.tierLabelEn;
   };
 
   return (
@@ -209,22 +225,22 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToMap}
-            className="comic-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg"
+            className="comic-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg cursor-pointer"
           >
-            {lang === 'zh' ? '← 返回航海地图' : '← Quest Map'}
+            {t.backToMap}
           </button>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold text-blue-600 uppercase tracking-wide">
-                Week {topic.week} · {lang === 'zh' ? topic.strandZh : topic.strandEn}
+                {t.weekPrefix} {topic.week} · {topicStrand}
               </span>
               <span className="text-xs text-slate-400">·</span>
               <span className="text-xs text-slate-600 font-medium">
-                📍 {lang === 'zh' ? topic.landmarkZh : topic.landmark}
+                📍 {topicLandmark}
               </span>
             </div>
             <h2 className="font-comic text-lg font-bold text-slate-900 leading-tight">
-              {lang === 'zh' ? topic.titleZh : topic.titleEn}
+              {topicTitle}
             </h2>
           </div>
         </div>
@@ -257,76 +273,76 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
           {/* Scratchpad Button */}
           <button
             onClick={onOpenScratchpad}
-            className="comic-btn px-3 py-1.5 bg-sky-300 hover:bg-sky-400 text-slate-900 text-xs font-bold rounded-xl flex items-center gap-1.5"
+            className="comic-btn px-3 py-1.5 bg-sky-300 hover:bg-sky-400 text-slate-900 text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer"
             title="Open scratchpad"
           >
             <span>✏️</span>
-            <span>{lang === 'zh' ? '草稿板' : 'Scratchpad'}</span>
+            <span>{t.scratchpad}</span>
           </button>
         </div>
       </div>
 
-      {/* 4 Difficulty Tiers Selector Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 bg-amber-50/80 border-2 border-slate-900 rounded-2xl p-2.5 comic-box-sm">
+      {/* Compact Difficulty Tier Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 bg-amber-50/80 border-2 border-slate-900 rounded-2xl p-2 comic-box-sm">
         <div className="flex items-center gap-1.5 text-xs font-comic font-bold text-slate-700 pl-1">
           <Zap size={14} className="text-amber-500" />
-          <span>{lang === 'zh' ? '选择难度梯队：' : 'Select Difficulty Tier:'}</span>
+          <span>{t.tier}</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
           <button
             onClick={() => handleSelectTierMode('all')}
-            className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all cursor-pointer ${
               tierMode === 'all'
                 ? 'bg-blue-600 text-white border-2 border-slate-900 shadow-sm'
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🌟 {lang === 'zh' ? '循序渐进 (1➔5级递进)' : 'Progressive (1➔5)'}
+            {t.tierAll}
           </button>
 
           <button
             onClick={() => handleSelectTierMode('easy')}
-            className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all cursor-pointer ${
               tierMode === 'easy'
                 ? 'bg-emerald-500 text-white border-2 border-slate-900 shadow-sm'
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🟢 {lang === 'zh' ? '基础巩固' : 'Foundation'}
+            {t.tierEasy}
           </button>
 
           <button
             onClick={() => handleSelectTierMode('med')}
-            className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all cursor-pointer ${
               tierMode === 'med'
                 ? 'bg-amber-500 text-white border-2 border-slate-900 shadow-sm'
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🟡 {lang === 'zh' ? '进阶强化' : 'Intermediate'}
+            {t.tierMed}
           </button>
 
           <button
             onClick={() => handleSelectTierMode('boss')}
-            className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all cursor-pointer ${
               tierMode === 'boss'
                 ? 'bg-rose-500 text-white border-2 border-slate-900 shadow-sm'
                 : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
             }`}
           >
-            🔴 {lang === 'zh' ? '综合挑战' : 'Advanced'}
+            {t.tierBoss}
           </button>
 
           <button
             onClick={() => handleSelectTierMode('olympiad')}
-            className={`px-3 py-1 rounded-xl text-xs font-comic font-bold transition-all ${
+            className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all cursor-pointer ${
               tierMode === 'olympiad'
                 ? 'bg-purple-600 text-white border-2 border-slate-900 shadow-sm ring-2 ring-purple-300'
                 : 'bg-white text-purple-900 border border-purple-300 hover:bg-purple-50 font-bold'
             }`}
           >
-            👑 {lang === 'zh' ? '思维奥数' : 'Olympiad'}
+            {t.tierOlympiad}
           </button>
         </div>
       </div>
@@ -337,51 +353,51 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div className="flex items-center gap-2">
             <span className={`px-2.5 py-1 text-xs font-bold rounded-lg border ${getTierColor(currentQ.tier)}`}>
-              {lang === 'zh' ? currentQ.tierLabelZh : currentQ.tierLabelEn}
+              {getTierLabel(currentQ)}
             </span>
             <span className="text-xs text-slate-500 font-semibold">
-              {lang === 'zh' ? `第 ${currentIdx + 1} / ${questions.length} 题` : `Question ${currentIdx + 1} of ${questions.length}`}
+              {t.questionCount(currentIdx + 1, questions.length)}
             </span>
             {attempt === 2 && !isAnswered && (
               <span className="px-2 py-0.5 text-xs font-bold bg-amber-400 text-amber-950 rounded border border-amber-500 animate-bounce">
-                {lang === 'zh' ? '⚡ 最后 1 次机会！' : '⚡ 2nd Chance!'}
+                {t.secondChance}
               </span>
             )}
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Dynamic Variation Generator Button ("题目要有变化") */}
+            {/* Dynamic Variation Generator Button */}
             <button
               onClick={handleRegenerateCurrentVariant}
-              className="comic-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-400 rounded-xl text-xs font-comic font-bold transition-colors"
+              className="comic-btn flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-400 rounded-xl text-xs font-comic font-bold transition-colors cursor-pointer"
               title="Generate new numeric variation for this question"
             >
               <RefreshCw size={14} className="text-amber-700" />
-              <span>{lang === 'zh' ? '🔄 换一道变式题' : '🔄 New Variant'}</span>
+              <span>{t.newVariant}</span>
             </button>
 
-            {/* Audio Read-Aloud Button */}
+            {/* Multilingual Audio Read-Aloud Button */}
             <button
               onClick={handleSpeak}
-              className={`comic-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+              className={`comic-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                 isSpeaking ? 'bg-amber-400 text-slate-900 ring-2 ring-slate-900' : 'bg-slate-100 hover:bg-white text-slate-700'
               }`}
-              title="Listen to English pronunciation"
+              title="Listen to pronunciation"
             >
               {isSpeaking ? <VolumeX size={15} /> : <Volume2 size={15} />}
-              <span>{isSpeaking ? 'Stop' : '🔊 Read'}</span>
+              <span>{isSpeaking ? t.stopRead : t.readAloud}</span>
             </button>
           </div>
         </div>
 
         {/* Question Text */}
         <div className="mb-6">
-          <h3 className="font-comic text-xl md:text-2xl font-bold text-slate-900 leading-snug mb-2">
-            {currentQ.questionEn}
+          <h3 className="font-comic text-xl md:text-2xl font-bold text-slate-900 leading-snug mb-2 whitespace-pre-line">
+            {displayQuestion}
           </h3>
-          {lang === 'zh' && (
-            <p className="text-base text-slate-700 font-medium leading-relaxed bg-amber-50/80 p-3.5 rounded-xl border border-amber-200">
-              {currentQ.questionZh}
+          {secondaryQuestion && secondaryQuestion !== displayQuestion && (
+            <p className="text-xs text-slate-500 font-medium leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              {secondaryQuestion}
             </p>
           )}
         </div>
@@ -402,8 +418,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
 
         {/* 4 Choices Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-6">
-          {currentQ.optionsEn.map((optEn, i) => {
-            const optZh = currentQ.optionsZh[i];
+          {displayOptions.map((optText, i) => {
             const isSelected = selectedOpt === i;
             const isCorrectOption = isAnswered && i === currentQ.correctIndex;
             const isWrongSelection = isAnswered && isSelected && !isCorrect;
@@ -422,20 +437,15 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
                 key={i}
                 onClick={() => handleSelectOption(i)}
                 disabled={isAnswered && isCorrect}
-                className={`comic-btn p-4 rounded-2xl text-left flex items-start gap-3 transition-all ${btnStyle}`}
+                className={`comic-btn p-4 rounded-2xl text-left flex items-start gap-3 transition-all cursor-pointer ${btnStyle}`}
               >
                 <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-comic text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                   {String.fromCharCode(65 + i)}
                 </span>
                 <div className="flex-1">
                   <div className="font-comic font-bold text-base leading-tight">
-                    {optEn}
+                    {optText}
                   </div>
-                  {lang === 'zh' && optZh !== optEn && (
-                    <div className="text-xs text-slate-600 mt-1 font-medium">
-                      {optZh}
-                    </div>
-                  )}
                 </div>
                 {isCorrectOption && (
                   <CheckCircle2 size={20} className="text-emerald-700 shrink-0 self-center" />
@@ -453,16 +463,11 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
           <div className="mb-6 p-4 bg-amber-100 border-2 border-amber-500 rounded-2xl comic-box-sm animate-in fade-in slide-in-from-top-2">
             <div className="flex items-center gap-2 mb-1.5 text-amber-900 font-comic font-bold text-sm">
               <span className="text-lg">💡</span>
-              <span>{lang === 'zh' ? '侦探解题秘籍（Secret Clue）' : 'Detective Secret Clue'}</span>
+              <span>{t.secretClue}</span>
             </div>
             <p className="text-sm font-semibold text-slate-800 leading-relaxed mb-1">
-              {currentQ.secretClueEn}
+              {displayClue}
             </p>
-            {lang === 'zh' && (
-              <p className="text-xs text-amber-950 leading-relaxed font-medium">
-                {currentQ.secretClueZh}
-              </p>
-            )}
           </div>
         )}
 
@@ -477,36 +482,31 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
               {isCorrect ? (
                 <span className="text-emerald-800 flex items-center gap-1">
                   <Sparkles size={16} />
-                  {lang === 'zh' ? '太棒了！水手回答正确！' : 'Brilliant, Mariner! Correct!'}
+                  {lang === 'fr' ? 'Bravo, Marin ! Réponse correcte !' : lang === 'zh' ? '太棒了！水手回答正确！' : 'Brilliant, Mariner! Correct!'}
                 </span>
               ) : (
                 <span className="text-slate-800 flex items-center gap-1">
                   <HelpCircle size={16} />
-                  {lang === 'zh' ? '解题锦囊与正确步骤：' : 'Step-by-Step Solution Breakdown:'}
+                  {lang === 'fr' ? 'Explication étape par étape :' : lang === 'zh' ? '解题锦囊与正确步骤：' : 'Step-by-Step Solution Breakdown:'}
                 </span>
               )}
             </div>
             <p className="text-sm text-slate-800 font-medium leading-relaxed">
-              {currentQ.explanationEn}
+              {displayExplanation}
             </p>
-            {lang === 'zh' && (
-              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                {currentQ.explanationZh}
-              </p>
-            )}
           </div>
         )}
 
         {/* Action Bottom Bar */}
         <div className="flex items-center justify-between pt-2 border-t-2 border-slate-200">
           <div className="text-xs text-slate-500 font-medium">
-            {lang === 'zh'
-              ? attempt === 1 && !isAnswered
+            {attempt === 1 && !isAnswered && (
+              lang === 'fr'
+                ? '2 chances par question · Bonus du 1er coup = 2 étoiles ⭐⭐'
+                : lang === 'zh'
                 ? '每题有 2 次机会，首次正确获双倍星星 ⭐⭐'
-                : ''
-              : attempt === 1 && !isAnswered
-              ? '2 chances per question · 1st-try bonus = 2 Stars ⭐⭐'
-              : ''}
+                : '2 chances per question · 1st-try bonus = 2 Stars ⭐⭐'
+            )}
           </div>
 
           <div>
@@ -514,23 +514,19 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
               <button
                 onClick={handleCheckAnswer}
                 disabled={selectedOpt === null}
-                className="comic-btn px-6 py-2.5 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-900 font-comic font-bold text-sm rounded-xl flex items-center gap-2"
+                className="comic-btn px-6 py-2.5 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-900 font-comic font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer"
               >
-                <span>{lang === 'zh' ? '提交检查 ➔' : 'Check Answer ➔'}</span>
+                <span>{t.checkAnswer} ➔</span>
               </button>
             ) : (
               <button
                 onClick={handleNextQuestion}
-                className="comic-btn px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-comic font-bold text-sm rounded-xl flex items-center gap-2 shadow-comic"
+                className="comic-btn px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-comic font-bold text-sm rounded-xl flex items-center gap-2 shadow-comic cursor-pointer"
               >
                 <span>
                   {currentIdx < questions.length - 1
-                    ? lang === 'zh'
-                      ? '下一题 ➔'
-                      : 'Next Question ➔'
-                    : lang === 'zh'
-                    ? '🎉 查看通关胜利大典！'
-                    : '🎉 View Victory Celebration!'}
+                    ? t.nextQuestion
+                    : t.openChest}
                 </span>
                 <ArrowRight size={16} />
               </button>
@@ -548,6 +544,7 @@ export const QuestionRunner: React.FC<QuestionRunnerProps> = ({
         weekNumber={topic.week}
         weekTitleEn={topic.titleEn}
         weekTitleZh={topic.titleZh}
+        weekTitleFr={topic.titleFr}
         tierMode={tierMode}
         lang={lang}
         soundEnabled={soundEnabled}

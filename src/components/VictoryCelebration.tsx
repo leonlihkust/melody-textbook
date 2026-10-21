@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
-import { Trophy, Star, Sparkles, RefreshCw, ArrowRight, Award, Compass, CheckCircle2 } from 'lucide-react';
-import { playChestFanfare, playClickSound, playCorrectSound } from '../utils/audio';
+import { Trophy, Star, Sparkles, RefreshCw, Compass } from 'lucide-react';
+import { playChestFanfare, playClickSound } from '../utils/audio';
 import { MarinerTrophy3D } from './MarinerTrophy3D';
+import { triggerWeekVictoryConfetti } from '../utils/confettiExplosion';
+import { Language, I18N } from '../utils/i18n';
 
 interface VictoryCelebrationProps {
   isOpen: boolean;
@@ -12,8 +14,9 @@ interface VictoryCelebrationProps {
   weekNumber: number;
   weekTitleEn: string;
   weekTitleZh: string;
+  weekTitleFr?: string;
   tierMode: 'all' | 'easy' | 'med' | 'boss' | 'olympiad';
-  lang: 'en' | 'zh';
+  lang: Language;
   soundEnabled: boolean;
   onPlayAgainVariant: () => void;
   onTryHigherDifficulty: () => void;
@@ -28,6 +31,7 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
   weekNumber,
   weekTitleEn,
   weekTitleZh,
+  weekTitleFr,
   tierMode,
   lang,
   soundEnabled,
@@ -38,6 +42,7 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
   const [chestOpened, setChestOpened] = useState(false);
   const [starsRevealed, setStarsRevealed] = useState(0);
   const [show3dTrophy, setShow3dTrophy] = useState(true);
+  const t = I18N[lang].victory;
 
   // Trigger grand victory fireworks and audio sequence upon opening
   useEffect(() => {
@@ -51,34 +56,13 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
       playChestFanfare();
     }
 
-    // Sequence 1: Initial confetti burst
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#f59e0b', '#3b82f6', '#10b981', '#ec4899', '#8b5cf6']
-    });
+    // Sequence: Grand festive confetti explosion
+    triggerWeekVictoryConfetti();
 
-    // Sequence 2: Open chest after 500ms
+    // Sequence 2: Open chest after 450ms
     const openTimer = setTimeout(() => {
       setChestOpened(true);
-
-      // Multi-cannon confetti blast
-      confetti({
-        particleCount: 60,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.7 },
-        colors: ['#fbbf24', '#f59e0b', '#38bdf8']
-      });
-      confetti({
-        particleCount: 60,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.7 },
-        colors: ['#34d399', '#a78bfa', '#f472b6']
-      });
-    }, 500);
+    }, 450);
 
     // Sequence 3: Staggered star animation
     const starTimer1 = setTimeout(() => setStarsRevealed(1), 1000);
@@ -95,45 +79,52 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
 
   if (!isOpen) return null;
 
-  // Determine honor badge title based on tier and performance
   const getHonorTitle = () => {
     if (tierMode === 'olympiad') {
       return {
-        titleEn: '👑 OLYMPIAD BRAIN KING',
-        titleZh: '👑 终极奥数思维脑王',
+        titleEn: '👑 OLYMPIAD MARINER HERO',
+        titleFr: '👑 HÉROS DES OLYMPIADES',
+        titleZh: '👑 奥数水手终极先锋',
         color: 'from-purple-500 to-indigo-600'
       };
     }
     if (tierMode === 'boss') {
       return {
-        titleEn: '🔴 MATH EXPEDITION MASTER',
-        titleZh: '🔴 卓越高难挑战大师',
-        color: 'from-rose-500 to-red-600'
+        titleEn: '🔴 BOSS SLAYER MASTER',
+        titleFr: '🔴 MAÎTRE DU DÉFI SUPRÊME',
+        titleZh: '🔴 高难度挑战大元帅',
+        color: 'from-rose-500 to-amber-500'
       };
     }
     if (tierMode === 'med') {
       return {
-        titleEn: '🟡 STAR NAVIGATOR',
-        titleZh: '🟡 进阶领航精英水手',
+        titleEn: '🟡 SKILLED MARINER PILOT',
+        titleFr: '🟡 PILOTE MARIN EXPÉRIMENTÉ',
+        titleZh: '🟡 进阶探险熟练领航',
         color: 'from-amber-400 to-orange-500'
       };
     }
     if (tierMode === 'easy') {
       return {
         titleEn: '🟢 FOUNDATION CHAMPION',
+        titleFr: '🟢 CHAMPION DES BASES',
         titleZh: '🟢 扎实数感稳健冠军',
         color: 'from-emerald-400 to-teal-500'
       };
     }
     return {
       titleEn: '🌟 ALL-ROUND CONQUEROR',
+      titleFr: '🌟 VAINQUEUR TOUT-TERRAIN',
       titleZh: '🌟 全能阶梯通关大赢家',
       color: 'from-blue-500 to-indigo-600'
     };
   };
 
   const honor = getHonorTitle();
+  const honorText = lang === 'fr' ? honor.titleFr : lang === 'zh' ? honor.titleZh : honor.titleEn;
   const isFlawless = correctFirstTryCount === totalQuestions;
+  const currentWeekTitle = lang === 'fr' ? (weekTitleFr || weekTitleEn) : lang === 'zh' ? weekTitleZh : weekTitleEn;
+  const weekLabel = lang === 'fr' ? `Semaine ${weekNumber}` : lang === 'zh' ? `第 ${weekNumber} 周` : `Week ${weekNumber}`;
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
@@ -151,10 +142,14 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
               if (soundEnabled) playClickSound();
               setShow3dTrophy(v => !v);
             }}
-            className="px-3 py-1 bg-amber-100 hover:bg-amber-200 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-slate-900 flex items-center gap-1.5 shadow-sm transition-all"
+            className="px-3 py-1 bg-amber-100 hover:bg-amber-200 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-slate-900 flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
           >
             <Sparkles size={13} className="text-amber-600" />
-            <span>{show3dTrophy ? (lang === 'zh' ? '切换 2D 宝箱' : 'View 2D Chest') : (lang === 'zh' ? '✨ 开启 3D 金舵奖杯' : '✨ 3D Mariner Trophy')}</span>
+            <span>
+              {show3dTrophy
+                ? (lang === 'fr' ? 'Vue 2D Coffre' : lang === 'zh' ? '切换 2D 宝箱' : 'View 2D Chest')
+                : (lang === 'fr' ? '✨ Trophée 3D' : lang === 'zh' ? '✨ 开启 3D 金舵奖杯' : '✨ 3D Mariner Trophy')}
+            </span>
           </button>
         </div>
 
@@ -162,8 +157,8 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
         {show3dTrophy ? (
           <div className="mb-2">
             <MarinerTrophy3D
-              title={lang === 'zh' ? '水手金舵奥数奖杯' : 'Mariner Golden Helm Trophy'}
-              subtitle={lang === 'zh' ? '四年级数学闯关大获全胜' : 'Grade 4 Math Stage Complete'}
+              title={lang === 'fr' ? 'Trophée Gouvernail d\'Or' : lang === 'zh' ? '水手金舵奥数奖杯' : 'Mariner Golden Helm Trophy'}
+              subtitle={lang === 'fr' ? 'Étape de 4e année complétée' : lang === 'zh' ? '四年级数学闯关大获全胜' : 'Grade 4 Math Stage Complete'}
               starsCount={starsEarned}
               interactive={true}
             />
@@ -183,7 +178,7 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
                 {chestOpened ? '🏆' : '🎁'}
               </span>
               <span className="font-comic text-[11px] font-bold text-slate-900 bg-white/90 px-2 py-0.5 rounded-full border border-slate-900 mt-1 shadow-sm">
-                {chestOpened ? 'VICTORY!' : 'OPENING...'}
+                {chestOpened ? (lang === 'fr' ? 'VICTOIRE !' : 'VICTORY!') : (lang === 'fr' ? 'OUVERTURE...' : 'OPENING...')}
               </span>
             </div>
 
@@ -201,14 +196,14 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
 
         {/* Honor Badge Banner */}
         <div className={`inline-block px-4 py-1.5 rounded-2xl bg-gradient-to-r ${honor.color} text-white font-comic text-xs sm:text-sm font-bold uppercase tracking-wider shadow-md mb-2 border-2 border-slate-900`}>
-          {lang === 'zh' ? honor.titleZh : honor.titleEn}
+          {honorText}
         </div>
 
         <h2 className="font-comic text-2xl sm:text-3xl font-bold text-slate-900 leading-tight mb-1">
-          {lang === 'zh' ? '🎉 胜利大通关！' : '🎉 Stage Conquered!'}
+          {t.title}
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 font-semibold mb-4">
-          Week {weekNumber} · {lang === 'zh' ? weekTitleZh : weekTitleEn}
+          {weekLabel} · {currentWeekTitle}
         </p>
 
         {/* 3 Staggered Grand Gold Stars */}
@@ -234,22 +229,22 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
         {isFlawless && (
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-emerald-900 mb-4 shadow-sm animate-pulse">
             <Sparkles size={14} className="text-emerald-600" />
-            <span>{lang === 'zh' ? '⚡ 100% 一击全中！完美首答大师！' : '⚡ 100% Flawless First-Try Accuracy!'}</span>
+            <span>{t.firstTryPerfect}</span>
           </div>
         )}
 
         {/* Victory Stats Grid */}
         <div className="grid grid-cols-3 gap-2.5 mb-6 text-left">
           <div className="bg-amber-50 p-3 rounded-2xl border-2 border-slate-900 comic-box-sm">
-            <div className="text-xs text-slate-500 font-bold mb-0.5">⭐ {lang === 'zh' ? '获得星星' : 'Stars'}</div>
+            <div className="text-xs text-slate-500 font-bold mb-0.5">⭐ {t.starsEarned}</div>
             <div className="font-comic text-xl font-bold text-amber-900">+{starsEarned}</div>
           </div>
           <div className="bg-blue-50 p-3 rounded-2xl border-2 border-slate-900 comic-box-sm">
-            <div className="text-xs text-slate-500 font-bold mb-0.5">🎯 {lang === 'zh' ? '正确题数' : 'Score'}</div>
+            <div className="text-xs text-slate-500 font-bold mb-0.5">🎯 {lang === 'fr' ? 'Score' : lang === 'zh' ? '正确题数' : 'Score'}</div>
             <div className="font-comic text-xl font-bold text-blue-900">{totalQuestions}/{totalQuestions}</div>
           </div>
           <div className="bg-emerald-50 p-3 rounded-2xl border-2 border-slate-900 comic-box-sm">
-            <div className="text-xs text-slate-500 font-bold mb-0.5">⚡ {lang === 'zh' ? '首次答对' : '1st Try'}</div>
+            <div className="text-xs text-slate-500 font-bold mb-0.5">⚡ {lang === 'fr' ? '1er coup' : lang === 'zh' ? '首次答对' : '1st Try'}</div>
             <div className="font-comic text-xl font-bold text-emerald-900">{correctFirstTryCount}/{totalQuestions}</div>
           </div>
         </div>
@@ -262,11 +257,11 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
               if (soundEnabled) playClickSound();
               onPlayAgainVariant();
             }}
-            className="w-full sm:flex-1 comic-btn py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-comic"
+            className="w-full sm:flex-1 comic-btn py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-comic cursor-pointer"
             title="Practice again with varied numbers"
           >
             <RefreshCw size={16} />
-            <span>{lang === 'zh' ? '🔄 换一组变式题练习' : '🔄 Practice New Variant'}</span>
+            <span>{t.playAgainVariant}</span>
           </button>
 
           {/* Level Up to Higher Difficulty */}
@@ -276,9 +271,9 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
                 if (soundEnabled) playClickSound();
                 onTryHigherDifficulty();
               }}
-              className="w-full sm:flex-1 comic-btn py-3 bg-purple-500 hover:bg-purple-400 text-white font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-comic"
+              className="w-full sm:flex-1 comic-btn py-3 bg-purple-500 hover:bg-purple-400 text-white font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-comic cursor-pointer"
             >
-              <span>👑 {lang === 'zh' ? '挑战更难题目' : 'Level Up Difficulty'}</span>
+              <span>{t.tryOlympiad}</span>
             </button>
           )}
 
@@ -288,10 +283,10 @@ export const VictoryCelebration: React.FC<VictoryCelebrationProps> = ({
               if (soundEnabled) playClickSound();
               onReturnToMap();
             }}
-            className="w-full sm:flex-1 comic-btn py-3 bg-slate-900 hover:bg-slate-800 text-white font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-comic"
+            className="w-full sm:flex-1 comic-btn py-3 bg-slate-900 hover:bg-slate-800 text-white font-comic font-bold text-xs sm:text-sm rounded-2xl flex items-center justify-center gap-2 shadow-comic cursor-pointer"
           >
             <Compass size={16} />
-            <span>{lang === 'zh' ? '返回航海图' : 'Back to Map'}</span>
+            <span>{t.returnToMap}</span>
           </button>
         </div>
 

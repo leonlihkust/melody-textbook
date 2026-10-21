@@ -1,14 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
-import { Volume2, VolumeX, Sparkles, Globe, Compass, ArrowLeft, ArrowRight, CheckCircle2, XCircle, Award, BookOpen, Target } from 'lucide-react';
-import { WorldCountry, WORLD_COUNTRIES } from '../data/worldData';
+import { Volume2, VolumeX, Sparkles, Globe, Compass, ArrowLeft, ArrowRight, CheckCircle2, XCircle, BookOpen, Target } from 'lucide-react';
+import { WORLD_COUNTRIES } from '../data/worldData';
 import { COUNTRY_LANDMARKS } from '../data/landmarkData';
+import { WORLD_FRENCH_DATA } from '../data/worldFrenchData';
 import { CountryIllustration } from './CountryIllustration';
 import { Globe3D } from './Globe3D';
-import { playCorrectSound, playClueSound, playClickSound, speakEnglish, stopSpeaking } from '../utils/audio';
+import { playCorrectSound, playClueSound, playClickSound, speakText, stopSpeaking } from '../utils/audio';
+import { triggerBadgeUnlockConfetti } from '../utils/confettiExplosion';
+import { Language, I18N } from '../utils/i18n';
 
 interface WorldExplorerProps {
-  lang: 'en' | 'zh';
+  lang: Language;
   soundEnabled: boolean;
   unlockedBadges: string[];
   onUnlockBadge: (badgeId: string, starsEarned: number) => void;
@@ -20,7 +23,6 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   unlockedBadges,
   onUnlockBadge,
 }) => {
-  // Main view mode: 'globe' (3D Interactive Earth) vs 'fact' (Focused Kid-Friendly Fun Fact & Quiz)
   const [viewMode, setViewMode] = useState<'globe' | 'fact'>('globe');
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [activeTab, setActiveTab] = useState<'fact' | 'quiz'>('fact');
@@ -28,21 +30,26 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
-  const filteredCountries = useMemo(() => {
-    return categoryFilter === 'All'
-      ? WORLD_COUNTRIES
-      : WORLD_COUNTRIES.filter(c => c.category === categoryFilter);
-  }, [categoryFilter]);
-
-  const currentCountry = filteredCountries[selectedIdx] || filteredCountries[0];
+  const t = I18N[lang].world;
+  const currentCountry = WORLD_COUNTRIES[selectedIdx] || WORLD_COUNTRIES[0];
   const isBadgeUnlocked = unlockedBadges.includes(currentCountry.id);
   const currentLandmark = COUNTRY_LANDMARKS[currentCountry.id];
+  const frData = WORLD_FRENCH_DATA[currentCountry.id];
+
+  // Country text localized
+  const countryName = lang === 'fr' ? (frData?.nameFr || currentCountry.nameEn) : lang === 'zh' ? currentCountry.nameZh : currentCountry.nameEn;
+  const countryCapital = lang === 'fr' ? (frData?.capitalFr || currentCountry.capitalEn) : lang === 'zh' ? currentCountry.capitalZh : currentCountry.capitalEn;
+  const countryTagline = lang === 'fr' ? (frData?.taglineFr || currentCountry.taglineEn) : lang === 'zh' ? currentCountry.taglineZh : currentCountry.taglineEn;
+  const countryFunFact = lang === 'fr' ? (frData?.funFactFr || currentCountry.funFactEn) : lang === 'zh' ? currentCountry.funFactZh : currentCountry.funFactEn;
+  const countryBadgeTitle = lang === 'fr' ? (frData?.badgeTitleFr || currentCountry.badgeTitleEn) : lang === 'zh' ? currentCountry.badgeTitleZh : currentCountry.badgeTitleEn;
+  const quizQuestion = lang === 'fr' ? (frData?.quizQuestionFr || currentCountry.quiz.questionEn) : lang === 'zh' ? currentCountry.quiz.questionZh : currentCountry.quiz.questionEn;
+  const quizExplanation = lang === 'fr' ? (frData?.quizExplanationFr || currentCountry.quiz.explanationEn) : lang === 'zh' ? currentCountry.quiz.explanationZh : currentCountry.quiz.explanationEn;
 
   // Dynamic shuffle for trivia options so answers are randomly balanced across A, B, C, D
   const quizData = useMemo(() => {
     const q = currentCountry.quiz;
+    const rawOptionsFr = frData?.quizOptionsFr || q.optionsEn;
     const indices = q.optionsEn.map((_, i) => i);
     for (let i = indices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -51,9 +58,10 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     return {
       optionsEn: indices.map(i => q.optionsEn[i]),
       optionsZh: indices.map(i => q.optionsZh[i]),
+      optionsFr: indices.map(i => rawOptionsFr[i]),
       correctIndex: indices.indexOf(q.correctIndex),
     };
-  }, [currentCountry]);
+  }, [currentCountry, frData]);
 
   const handleSpeak = (text: string) => {
     if (isSpeaking) {
@@ -62,14 +70,14 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
       return;
     }
     setIsSpeaking(true);
-    speakEnglish(text, () => setIsSpeaking(false));
+    speakText(text, lang, () => setIsSpeaking(false));
   };
 
   const handleNextCountry = () => {
     stopSpeaking();
     setIsSpeaking(false);
     if (soundEnabled) playClickSound();
-    setSelectedIdx(i => (i + 1) % filteredCountries.length);
+    setSelectedIdx(i => (i + 1) % WORLD_COUNTRIES.length);
     setActiveTab('fact');
     setSelectedOpt(null);
     setIsAnswered(false);
@@ -80,7 +88,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
     stopSpeaking();
     setIsSpeaking(false);
     if (soundEnabled) playClickSound();
-    setSelectedIdx(i => (i - 1 + filteredCountries.length) % filteredCountries.length);
+    setSelectedIdx(i => (i - 1 + WORLD_COUNTRIES.length) % WORLD_COUNTRIES.length);
     setActiveTab('fact');
     setSelectedOpt(null);
     setIsAnswered(false);
@@ -101,16 +109,17 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
       setIsAnswered(true);
       if (soundEnabled) playCorrectSound();
 
-      // Confetti for trivia victory!
-      confetti({
-        particleCount: 50,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
-      });
-
       if (!isBadgeUnlocked) {
+        triggerBadgeUnlockConfetti();
         onUnlockBadge(currentCountry.id, 2);
+      } else {
+        // Quick celebratory burst for re-answering
+        confetti({
+          particleCount: 50,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+        });
       }
     } else {
       setIsCorrect(false);
@@ -121,41 +130,35 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* =========================================================================
-          MODE 1: 3D EARTH GLOBE STAGE (Full focus on 3D, zero text clutter)
-          ========================================================================= */}
+      {/* MODE 1: 3D EARTH GLOBE STAGE */}
       {viewMode === 'globe' ? (
         <div className="animate-in fade-in duration-200">
           {/* Friendly Minimalist Top Bar */}
-          <div className="bg-white comic-box-lg rounded-3xl p-5 md:p-6 mb-5 bg-halftone-gold flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="bg-white comic-box rounded-2xl p-4 md:p-5 mb-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-2xl">🌍</span>
                 <span className="font-comic text-xs font-bold uppercase tracking-wider text-amber-800">
-                  {lang === 'zh' ? '水手 3D 航海地球仪' : 'Mariner 3D Globe Explorer'}
+                  {t.title}
                 </span>
               </div>
               <h1 className="font-comic text-xl md:text-2xl font-extrabold text-slate-900 leading-tight">
-                {lang === 'zh' ? '点击地球上的国家与标志性地标！' : 'Spin the Globe & Tap Countries or Landmarks!'}
+                {lang === 'fr' ? 'Tourne le globe et touche un pays !' : lang === 'zh' ? '点击地球上的国家与标志性地标！' : 'Spin the Globe & Tap Countries or Landmarks!'}
               </h1>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
-                {lang === 'zh'
-                  ? '拖动旋转地球，点击任意国家或地标开启神奇冷知识探险！'
-                  : 'Rotate the globe, find landmarks, and tap to discover fun facts!'}
+                {t.subtitle}
               </p>
             </div>
 
             {/* Badges collected counter */}
-            <div className="bg-white comic-box rounded-2xl px-4 py-3 flex items-center gap-3 shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-amber-400 flex items-center justify-center text-lg shadow-sm">
-                🎖️
-              </div>
+            <div className="bg-amber-50/80 border-2 border-slate-900 rounded-xl px-3.5 py-2 flex items-center gap-2.5 shrink-0 comic-box-sm">
+              <span className="text-xl">🎖️</span>
               <div>
                 <div className="font-comic text-base font-bold text-slate-900 leading-tight">
                   {unlockedBadges.length} / {WORLD_COUNTRIES.length}
                 </div>
                 <div className="text-[10px] font-semibold text-slate-500">
-                  {lang === 'zh' ? '已点亮勋章' : 'Badges Earned'}
+                  {t.earned}
                 </div>
               </div>
             </div>
@@ -169,11 +172,10 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
               unlockedBadges={unlockedBadges}
               selectedCountry={currentCountry}
               onSelectCountry={country => {
-                const idx = filteredCountries.findIndex(c => c.id === country.id);
+                const idx = WORLD_COUNTRIES.findIndex(c => c.id === country.id);
                 if (idx !== -1) {
                   setSelectedIdx(idx);
                 }
-                // Transition directly to the focused Fun Fact card and hide 3D world!
                 if (soundEnabled) playClickSound();
                 setActiveTab('fact');
                 setSelectedOpt(null);
@@ -189,7 +191,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
               <span className="text-3xl">{currentCountry.flag}</span>
               <div>
                 <div className="font-comic text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <span>{lang === 'zh' ? currentCountry.nameZh : currentCountry.nameEn}</span>
+                  <span>{countryName}</span>
                   {currentLandmark && (
                     <span className="text-xs text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-lg">
                       {currentLandmark.icon} {lang === 'zh' ? currentLandmark.shortNameZh : currentLandmark.shortNameEn}
@@ -197,7 +199,7 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                   )}
                 </div>
                 <p className="text-xs text-slate-600 font-medium">
-                  {lang === 'zh' ? currentCountry.taglineZh : currentCountry.taglineEn}
+                  {countryTagline}
                 </p>
               </div>
             </div>
@@ -210,23 +212,23 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                 setIsAnswered(false);
                 setViewMode('fact');
               }}
-              className="comic-btn w-full sm:w-auto px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-comic text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-comic transition-all"
+              className="comic-btn w-full sm:w-auto px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-comic text-xs font-bold rounded-xl flex items-center justify-center gap-2 shadow-comic transition-all cursor-pointer"
             >
               <BookOpen size={15} />
               <span>
-                {lang === 'zh'
-                  ? `阅读【${currentCountry.nameZh}】冷知识与问答 ➔`
-                  : `Explore ${currentCountry.nameEn} Fun Fact ➔`}
+                {lang === 'fr'
+                  ? `Explorer ${countryName} ➔`
+                  : lang === 'zh'
+                  ? `阅读【${countryName}】知识与问答 ➔`
+                  : `Explore ${countryName} Fun Fact ➔`}
               </span>
             </button>
           </div>
         </div>
       ) : (
-        /* =========================================================================
-           MODE 2: FOCUSED FUN FACT & QUIZ (3D World is completely HIDDEN, text is concise!)
-           ========================================================================= */
+        /* MODE 2: FOCUSED FUN FACT & QUIZ */
         <div className="animate-in fade-in zoom-in-95 duration-200">
-          {/* Top Navigation Bar: Back to Globe button + Country switcher */}
+          {/* Top Navigation Bar */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
             <button
               onClick={() => {
@@ -235,27 +237,27 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                 setIsSpeaking(false);
                 setViewMode('globe');
               }}
-              className="comic-btn px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl flex items-center gap-2 shadow-comic transition-all"
+              className="comic-btn px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl flex items-center gap-2 shadow-comic transition-all cursor-pointer"
             >
               <Globe size={15} className="animate-spin-slow" />
-              <span>{lang === 'zh' ? '⬅️ 返回 3D 地球仪' : '⬅️ Back to 3D Globe'}</span>
+              <span>{lang === 'fr' ? '⬅️ Retour au Globe 3D' : lang === 'zh' ? '⬅️ 返回 3D 地球仪' : '⬅️ Back to 3D Globe'}</span>
             </button>
 
             {/* Country Carousel Controls */}
             <div className="flex items-center gap-1.5 bg-white comic-box rounded-xl p-1">
               <button
                 onClick={handlePrevCountry}
-                className="comic-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-700"
+                className="comic-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-700 cursor-pointer"
                 title="Previous Country"
               >
                 <ArrowLeft size={16} />
               </button>
               <span className="font-comic text-xs font-bold px-2 text-slate-800">
-                {selectedIdx + 1} / {filteredCountries.length}
+                {selectedIdx + 1} / {WORLD_COUNTRIES.length}
               </span>
               <button
                 onClick={handleNextCountry}
-                className="comic-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-700"
+                className="comic-btn p-1.5 rounded-lg hover:bg-slate-100 text-slate-700 cursor-pointer"
                 title="Next Country"
               >
                 <ArrowRight size={16} />
@@ -274,19 +276,19 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                 <div>
                   <div className="flex items-center gap-2">
                     <h2 className="font-comic text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
-                      {lang === 'zh' ? currentCountry.nameZh : currentCountry.nameEn}
+                      {countryName}
                     </h2>
                     {isBadgeUnlocked && (
                       <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-emerald-100 border border-emerald-400 font-comic text-xs font-bold text-emerald-800 shadow-sm">
                         <Sparkles size={12} />
-                        {lang === 'zh' ? '勋章已获得' : 'Badge Unlocked'}
+                        {t.earned}
                       </span>
                     )}
                   </div>
                   <div className="text-xs text-slate-500 font-semibold mt-0.5 flex items-center gap-2">
-                    <span>📍 {lang === 'zh' ? `首都：${currentCountry.capitalZh}` : `Capital: ${currentCountry.capitalEn}`}</span>
+                    <span>📍 {t.capital} : {countryCapital}</span>
                     <span>·</span>
-                    <span className="text-blue-600 font-bold">{lang === 'zh' ? currentCountry.taglineZh : currentCountry.taglineEn}</span>
+                    <span className="text-blue-600 font-bold">{countryTagline}</span>
                   </div>
                 </div>
               </div>
@@ -298,72 +300,66 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                     if (soundEnabled) playClickSound();
                     setActiveTab('fact');
                   }}
-                  className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                     activeTab === 'fact'
                       ? 'bg-amber-300 text-slate-900 shadow-sm border border-slate-900'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <BookOpen size={13} />
-                  <span>{lang === 'zh' ? '神奇冷知识' : 'Fun Fact'}</span>
+                  <span>{t.funFacts}</span>
                 </button>
                 <button
                   onClick={() => {
                     if (soundEnabled) playClickSound();
                     setActiveTab('quiz');
                   }}
-                  className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-lg font-comic text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                     activeTab === 'quiz'
                       ? 'bg-blue-600 text-white shadow-sm border border-slate-900'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <Target size={13} />
-                  <span>{lang === 'zh' ? '问答赢勋章' : 'Trivia Quiz'}</span>
+                  <span>{t.badgeQuiz}</span>
                 </button>
               </div>
             </div>
 
-            {/* TAB 1: BITE-SIZED FUN FACT (Short, punchy, kid-friendly) */}
+            {/* TAB 1: FUN FACT */}
             {activeTab === 'fact' && (
               <div className="animate-in fade-in">
                 {/* Audio Read-Aloud Button */}
                 <div className="flex justify-end mb-3">
                   <button
-                    onClick={() => handleSpeak(currentCountry.funFactEn)}
-                    className={`comic-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors ${
+                    onClick={() => handleSpeak(countryFunFact)}
+                    className={`comic-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                       isSpeaking ? 'bg-amber-400 text-slate-900 ring-2 ring-slate-900' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                     }`}
-                    title="Listen to English pronunciation"
+                    title="Listen to pronunciation"
                   >
                     {isSpeaking ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                    <span>{isSpeaking ? 'Stop Audio' : '🔊 英文朗读 (Read Aloud)'}</span>
+                    <span>{isSpeaking ? 'Stop' : '🔊 Audio'}</span>
                   </button>
                 </div>
 
-                {/* Country Illustration Novel Graphic */}
+                {/* Country Illustration Graphic */}
                 <div className="mb-4">
-                  <CountryIllustration countryId={currentCountry.id} name={currentCountry.nameEn} lang={lang} />
+                  <CountryIllustration countryId={currentCountry.id} name={countryName} lang={lang} />
                 </div>
 
-                {/* Single Bite-Sized Fun Fact Box */}
+                {/* Fun Fact Box */}
                 <div className="bg-amber-50/90 border-2 border-slate-900 rounded-3xl p-5 md:p-6 shadow-comic relative mb-5">
                   <span className="absolute -top-3 left-5 bg-amber-400 border-2 border-slate-900 text-slate-900 px-3 py-0.5 rounded-full font-comic text-xs font-bold uppercase tracking-wider">
-                    {lang === 'zh' ? '🌟 神奇冷知识 · Did You Know?' : '🌟 Fun Fact'}
+                    🌟 {t.funFacts}
                   </span>
 
-                  <p className="font-comic text-base md:text-lg font-extrabold text-slate-900 leading-relaxed mb-2 mt-1">
-                    {currentCountry.funFactEn}
+                  <p className="font-comic text-base md:text-lg font-extrabold text-slate-900 leading-relaxed mt-1">
+                    {countryFunFact}
                   </p>
-
-                  {lang === 'zh' && (
-                    <p className="text-sm md:text-base text-slate-700 font-semibold leading-relaxed pt-2 border-t border-amber-200">
-                      {currentCountry.funFactZh}
-                    </p>
-                  )}
                 </div>
 
-                {/* Compact Landmark Highlight (Only 1 fun memorable sentence!) */}
+                {/* Compact Landmark Highlight */}
                 {currentLandmark && (
                   <div className="bg-slate-50 border-2 border-slate-800 rounded-2xl p-4 shadow-sm mb-5 flex items-start gap-3">
                     <span className="text-3xl p-2 bg-white rounded-xl border border-slate-200 shadow-sm shrink-0">
@@ -391,10 +387,14 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                     <span className="text-2xl">🎖️</span>
                     <div>
                       <div className="font-comic text-sm font-bold text-blue-950">
-                        {lang === 'zh' ? currentCountry.badgeTitleZh : currentCountry.badgeTitleEn}
+                        {countryBadgeTitle}
                       </div>
                       <div className="text-xs text-blue-800 font-medium">
-                        {lang === 'zh' ? '回答 1 道轻松趣味小问答，即可点亮该国探索勋章！' : 'Answer 1 quick fun trivia question to earn this badge!'}
+                        {lang === 'fr'
+                          ? 'Réponds au quiz pour débloquer le badge d\'exploration !'
+                          : lang === 'zh'
+                          ? '回答 1 道轻松趣味小问答，即可点亮该国探索勋章！'
+                          : 'Answer 1 quick fun trivia question to earn this badge!'}
                       </div>
                     </div>
                   </div>
@@ -404,37 +404,31 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                       if (soundEnabled) playClickSound();
                       setActiveTab('quiz');
                     }}
-                    className="comic-btn w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-comic whitespace-nowrap"
+                    className="comic-btn w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-comic text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-comic whitespace-nowrap cursor-pointer"
                   >
-                    <span>{lang === 'zh' ? '前往有奖问答 ➔' : 'Take Trivia Quiz ➔'}</span>
+                    <span>{t.takeQuiz} ➔</span>
                     <Target size={14} />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* TAB 2: TRIVIA QUIZ (1-Question Challenge) */}
+            {/* TAB 2: TRIVIA QUIZ */}
             {activeTab === 'quiz' && (
               <div className="animate-in fade-in">
                 <div className="mb-4">
                   <span className="text-xs font-bold text-blue-600 uppercase tracking-wide flex items-center gap-1">
                     <Target size={14} />
-                    <span>Trivia Challenge · {currentCountry.nameEn}</span>
+                    <span>Trivia · {countryName}</span>
                   </span>
                   <h3 className="font-comic text-lg md:text-xl font-extrabold text-slate-900 mt-1 leading-snug">
-                    {currentCountry.quiz.questionEn}
+                    {quizQuestion}
                   </h3>
-                  {lang === 'zh' && (
-                    <p className="text-sm text-slate-600 mt-1 font-semibold">
-                      {currentCountry.quiz.questionZh}
-                    </p>
-                  )}
                 </div>
 
                 {/* Shuffled Options */}
                 <div className="grid grid-cols-1 gap-2.5 mb-5">
-                  {quizData.optionsEn.map((optEn, i) => {
-                    const optZh = quizData.optionsZh[i];
+                  {(lang === 'fr' ? quizData.optionsFr : lang === 'zh' ? quizData.optionsZh : quizData.optionsEn).map((optText, i) => {
                     const isSelected = selectedOpt === i;
                     const isCorrectOption = isAnswered && i === quizData.correctIndex;
                     const isWrongSelection = isAnswered && isSelected && !isCorrect;
@@ -453,20 +447,15 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                         key={i}
                         onClick={() => handleSelectQuizOption(i)}
                         disabled={isAnswered && isCorrect}
-                        className={`comic-btn p-3.5 rounded-2xl text-left flex items-start gap-3 transition-all ${style}`}
+                        className={`comic-btn p-3.5 rounded-2xl text-left flex items-start gap-3 transition-all cursor-pointer ${style}`}
                       >
                         <span className="w-6 h-6 rounded-lg bg-slate-900 text-white font-comic text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                           {String.fromCharCode(65 + i)}
                         </span>
                         <div className="flex-1">
                           <div className="font-comic font-bold text-sm leading-tight">
-                            {optEn}
+                            {optText}
                           </div>
-                          {lang === 'zh' && optZh !== optEn && (
-                            <div className="text-xs text-slate-600 mt-0.5 font-medium">
-                              {optZh}
-                            </div>
-                          )}
                         </div>
                         {isCorrectOption && (
                           <CheckCircle2 size={18} className="text-emerald-700 shrink-0 self-center" />
@@ -490,22 +479,21 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                       {isCorrect ? (
                         <span className="text-emerald-800 flex items-center gap-1">
                           <Sparkles size={16} />
-                          {lang === 'zh' ? '回答正确！勋章已盖入你的探索家护照！' : 'Correct! Official badge stamped into your passport!'}
+                          {lang === 'fr'
+                            ? 'Bonne réponse ! Le badge est tamponné dans ton passeport !'
+                            : lang === 'zh'
+                            ? '回答正确！勋章已盖入你的探索家护照！'
+                            : 'Correct! Official badge stamped into your passport!'}
                         </span>
                       ) : (
                         <span className="text-slate-700">
-                          {lang === 'zh' ? '正确解答：' : 'Fact Explanation:'}
+                          {lang === 'fr' ? 'Explication :' : lang === 'zh' ? '正确解答：' : 'Fact Explanation:'}
                         </span>
                       )}
                     </div>
                     <p className="text-xs md:text-sm text-slate-800 font-medium leading-relaxed">
-                      {currentCountry.quiz.explanationEn}
+                      {quizExplanation}
                     </p>
-                    {lang === 'zh' && (
-                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                        {currentCountry.quiz.explanationZh}
-                      </p>
-                    )}
                   </div>
                 )}
 
@@ -514,25 +502,25 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
                   <button
                     onClick={handleCheckQuiz}
                     disabled={selectedOpt === null}
-                    className="w-full comic-btn py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-900 font-comic font-bold text-sm rounded-xl shadow-comic"
+                    className="w-full comic-btn py-3 bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-slate-900 font-comic font-bold text-sm rounded-xl shadow-comic cursor-pointer"
                   >
-                    {lang === 'zh' ? '提交答案 ➔' : 'Submit Answer ➔'}
+                    {lang === 'fr' ? 'Valider la réponse ➔' : lang === 'zh' ? '提交答案 ➔' : 'Submit Answer ➔'}
                   </button>
                 ) : (
                   <div className="flex flex-col sm:flex-row items-center gap-3">
                     <button
                       onClick={handleNextCountry}
-                      className="w-full sm:flex-1 comic-btn py-3 bg-blue-600 hover:bg-blue-500 text-white font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-comic"
+                      className="w-full sm:flex-1 comic-btn py-3 bg-blue-600 hover:bg-blue-500 text-white font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-comic cursor-pointer"
                     >
-                      <span>{lang === 'zh' ? '探索下一国家 ➔' : 'Explore Next Country ➔'}</span>
+                      <span>{lang === 'fr' ? 'Pays suivant ➔' : lang === 'zh' ? '探索下一国家 ➔' : 'Explore Next Country ➔'}</span>
                       <ArrowRight size={16} />
                     </button>
                     <button
                       onClick={() => setViewMode('globe')}
-                      className="w-full sm:w-auto comic-btn px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-1.5"
+                      className="w-full sm:w-auto comic-btn px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-comic font-bold text-sm rounded-xl flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <Globe size={15} />
-                      <span>{lang === 'zh' ? '返回地球仪' : 'Back to Globe'}</span>
+                      <span>{t.globe3D}</span>
                     </button>
                   </div>
                 )}
@@ -543,25 +531,25 @@ export const WorldExplorer: React.FC<WorldExplorerProps> = ({
             <div className="flex items-center justify-between mt-6 pt-4 border-t-2 border-slate-200">
               <button
                 onClick={handlePrevCountry}
-                className="comic-btn px-3.5 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
+                className="comic-btn px-3.5 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft size={14} />
-                <span>{lang === 'zh' ? '上一国家' : 'Previous'}</span>
+                <span>{lang === 'fr' ? 'Précédent' : lang === 'zh' ? '上一国家' : 'Previous'}</span>
               </button>
 
               <button
                 onClick={() => setViewMode('globe')}
-                className="comic-btn px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-comic text-xs font-bold rounded-xl flex items-center gap-1"
+                className="comic-btn px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-comic text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
               >
                 <Compass size={13} />
-                <span>{lang === 'zh' ? '地球仪总览' : 'Globe View'}</span>
+                <span>{t.globe3D}</span>
               </button>
 
               <button
                 onClick={handleNextCountry}
-                className="comic-btn px-3.5 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5"
+                className="comic-btn px-3.5 py-2 bg-slate-100 hover:bg-white text-slate-800 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer"
               >
-                <span>{lang === 'zh' ? '下一国家' : 'Next'}</span>
+                <span>{lang === 'fr' ? 'Suivant' : lang === 'zh' ? '下一国家' : 'Next'}</span>
                 <ArrowRight size={14} />
               </button>
             </div>

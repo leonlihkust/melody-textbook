@@ -17,7 +17,7 @@ import {
   ChevronRight,
   Info,
 } from 'lucide-react';
-import { playClickSound, speakEnglish, stopSpeaking } from '../utils/audio';
+import { playClickSound, speakText, stopSpeaking } from '../utils/audio';
 
 // Country geographic coordinates (lat, lon)
 export const COUNTRY_COORDINATES: Record<string, { lat: number; lon: number }> = {
@@ -586,7 +586,7 @@ function buildProceduralLandmark3D(landmark: CountryLandmark): THREE.Group {
 }
 
 // Procedural Sprite Label for Floating Landmark Billboard
-function createLandmarkBillboard(landmark: CountryLandmark, lang: 'en' | 'zh'): THREE.Sprite {
+function createLandmarkBillboard(landmark: CountryLandmark, lang: 'en' | 'fr' | 'zh'): THREE.Sprite {
   const displayTitle = lang === 'zh'
     ? (landmark.shortNameZh || landmark.nameZh.split('与')[0].split('(')[0].trim())
     : (landmark.shortNameEn || landmark.nameEn.split('&')[0].split('(')[0].trim());
@@ -673,7 +673,7 @@ function createLandmarkBillboard(landmark: CountryLandmark, lang: 'en' | 'zh'): 
 }
 
 interface Globe3DProps {
-  lang: 'en' | 'zh';
+  lang: 'en' | 'fr' | 'zh';
   soundEnabled: boolean;
   unlockedBadges: string[];
   selectedCountry: WorldCountry;
@@ -1150,7 +1150,7 @@ export const Globe3D: React.FC<Globe3DProps> = ({
       <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 pointer-events-auto">
         <div className="px-3 py-1.5 bg-blue-600 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-white shadow-comic flex items-center gap-1.5">
           <Compass size={14} className="animate-spin-slow text-amber-300" />
-          <span>{lang === 'zh' ? '3D 互动航海地球仪' : '3D Interactive Mariner Globe'}</span>
+          <span>{lang === 'fr' ? 'Globe Marin 3D Interactif' : lang === 'zh' ? '3D 互动航海地球仪' : '3D Interactive Mariner Globe'}</span>
         </div>
 
         {/* Landmarks vs Beacons Switcher */}
@@ -1167,7 +1167,7 @@ export const Globe3D: React.FC<Globe3DProps> = ({
             }`}
           >
             <Building2 size={13} />
-            <span>{lang === 'zh' ? '🏛️ 标志性建筑' : '🏛️ Landmarks'}</span>
+            <span>{lang === 'fr' ? '🏛️ Monuments' : lang === 'zh' ? '🏛️ 标志性建筑' : '🏛️ Landmarks'}</span>
           </button>
           <button
             onClick={() => {
@@ -1181,7 +1181,7 @@ export const Globe3D: React.FC<Globe3DProps> = ({
             }`}
           >
             <MapPin size={13} />
-            <span>{lang === 'zh' ? '📍 航海信标' : '📍 Pins'}</span>
+            <span>{lang === 'fr' ? '📍 Balises' : lang === 'zh' ? '📍 航海信标' : '📍 Pins'}</span>
           </button>
         </div>
       </div>
@@ -1265,7 +1265,7 @@ export const Globe3D: React.FC<Globe3DProps> = ({
               </span>
             )}
             <span className="text-[10px] px-1.5 py-0.5 rounded-lg bg-blue-600 text-white font-sans font-bold">
-              {lang === 'zh' ? '点击探索' : 'Click to Visit'}
+              {lang === 'fr' ? 'Cliquer pour visiter' : lang === 'zh' ? '点击探索' : 'Click to Visit'}
             </span>
           </div>
         </div>
@@ -1316,7 +1316,7 @@ export const Globe3D: React.FC<Globe3DProps> = ({
           <div className="p-2.5 rounded-xl bg-amber-50 border-2 border-amber-300 mb-3">
             <div className="flex items-center gap-1 font-comic text-xs font-bold text-amber-900 mb-1">
               <Sparkles size={12} className="text-amber-600" />
-              <span>{lang === 'zh' ? '🌟 建筑力学与历史探秘' : '🌟 Architectural Secret'}</span>
+              <span>{lang === 'fr' ? '🌟 Secret d\'architecture' : lang === 'zh' ? '🌟 建筑力学与历史探秘' : '🌟 Architectural Secret'}</span>
             </div>
             <p className="text-[11px] text-amber-950/90 leading-normal">
               {lang === 'zh'
@@ -1334,13 +1334,13 @@ export const Globe3D: React.FC<Globe3DProps> = ({
                   lang === 'zh'
                     ? `${activeSpotlightLandmark.nameZh}。位于${activeSpotlightLandmark.cityZh}。${activeSpotlightLandmark.descZh}。${activeSpotlightLandmark.architecturalFactZh}`
                     : `${activeSpotlightLandmark.nameEn} in ${activeSpotlightLandmark.cityEn}. ${activeSpotlightLandmark.descEn} ${activeSpotlightLandmark.architecturalFactEn}`;
-                speakEnglish(text);
+                speakText(text, lang);
               }}
               className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-slate-800 flex items-center gap-1 shadow-sm transition-all"
               title="Read Aloud"
             >
               <Volume2 size={14} className="text-blue-600" />
-              <span>{lang === 'zh' ? '朗读' : 'Read'}</span>
+              <span>{lang === 'fr' ? 'Écouter' : lang === 'zh' ? '朗读' : 'Read'}</span>
             </button>
             <button
               onClick={() => {
@@ -1351,7 +1351,7 @@ export const Globe3D: React.FC<Globe3DProps> = ({
               }}
               className="flex-1 py-1.5 px-3 bg-amber-400 hover:bg-amber-300 border-2 border-slate-900 rounded-xl font-comic text-xs font-bold text-slate-950 flex items-center justify-center gap-1 shadow-comic transition-all"
             >
-              <span>{lang === 'zh' ? '前往探索本国' : 'Explore Country'}</span>
+              <span>{lang === 'fr' ? 'Explorer le pays' : lang === 'zh' ? '前往探索本国' : 'Explore Country'}</span>
               <ChevronRight size={14} />
             </button>
           </div>

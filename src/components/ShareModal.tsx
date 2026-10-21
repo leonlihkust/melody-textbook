@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { Share2, Copy, Check, X, QrCode, Smartphone, ExternalLink } from 'lucide-react';
+import { Copy, Check, X, QrCode, Smartphone } from 'lucide-react';
 import { playClickSound } from '../utils/audio';
+import { Language, I18N } from '../utils/i18n';
 
 interface ShareModalProps {
   isOpen: boolean;
   onClose: () => void;
-  lang: 'en' | 'zh';
+  lang: Language;
   soundEnabled: boolean;
 }
 
 export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, soundEnabled }) => {
   const [copied, setCopied] = useState(false);
+  const t = I18N[lang].share;
 
   // Fallback to the dedicated Cloud Run Shared App URL if window.location isn't the public one
   const shareUrl = typeof window !== 'undefined'
@@ -44,8 +46,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, s
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 comic-box-sm"
-          title="Close"
+          className="absolute top-4 right-4 p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 comic-box-sm cursor-pointer"
+          title={t.close}
           aria-label="Close share modal"
         >
           <X size={18} />
@@ -58,10 +60,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, s
           </span>
           <div>
             <h3 className="font-comic text-xl font-bold text-slate-900 leading-tight">
-              {lang === 'zh' ? '分享给同学与家长' : 'Share Quest with Classmates'}
+              {t.title}
             </h3>
             <p className="text-xs text-slate-500 font-medium">
-              {lang === 'zh' ? '由 Yang & Melody 倾心出品 · Google Cloud 全球实时免费托管' : 'Crafted by Yang & Melody · Hosted live on Google Cloud'}
+              {t.subtitle}
             </p>
           </div>
         </div>
@@ -78,10 +80,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, s
           <div>
             <div className="font-comic text-sm font-bold text-slate-900 mb-1 flex items-center justify-center sm:justify-start gap-1">
               <QrCode size={16} className="text-blue-600" />
-              <span>{lang === 'zh' ? '平板 / 手机微信扫一扫' : 'Scan with iPad / Phone'}</span>
+              <span>{lang === 'fr' ? 'Scanner avec iPad / Téléphone' : lang === 'zh' ? '平板 / 手机微信扫一扫' : 'Scan with iPad / Phone'}</span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed font-medium">
-              {lang === 'zh'
+              {lang === 'fr'
+                ? 'Ouvre l\'appareil photo de ton iPad ou téléphone et pointe-le vers le code QR pour jouer instantanément !'
+                : lang === 'zh'
                 ? '用 iPad 相机或手机直接扫描左侧二维码，即可瞬间进入水手数学航海与世界探索！'
                 : 'Open your camera app and point it at the QR code to launch the game instantly on any tablet or phone!'}
             </p>
@@ -91,7 +95,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, s
         {/* Share Link Copy Field */}
         <div className="mb-5">
           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-            {lang === 'zh' ? '公开专属网址（永久有效）' : 'Public Shareable Link'}
+            {lang === 'fr' ? 'Lien de partage public' : lang === 'zh' ? '公开专属网址（永久有效）' : 'Public Shareable Link'}
           </label>
           <div className="flex items-center gap-2">
             <div className="flex-1 bg-slate-100 border-2 border-slate-900 rounded-xl px-3 py-2 text-xs font-mono text-slate-800 truncate select-all">
@@ -99,14 +103,14 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, s
             </div>
             <button
               onClick={handleCopy}
-              className={`comic-btn px-4 py-2 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5 shrink-0 transition-all ${
+              className={`comic-btn px-4 py-2 font-comic text-xs font-bold rounded-xl flex items-center gap-1.5 shrink-0 transition-all cursor-pointer ${
                 copied
                   ? 'bg-emerald-400 text-slate-900'
                   : 'bg-amber-400 hover:bg-amber-300 text-slate-900'
               }`}
             >
               {copied ? <Check size={14} /> : <Copy size={14} />}
-              <span>{copied ? (lang === 'zh' ? '已复制！' : 'Copied!') : (lang === 'zh' ? '复制链接' : 'Copy')}</span>
+              <span>{copied ? t.copied : t.copyLink}</span>
             </button>
           </div>
         </div>
@@ -115,12 +119,32 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, lang, s
         <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs text-slate-600 leading-relaxed">
           <div className="font-comic font-bold text-slate-800 mb-1 flex items-center gap-1">
             <Smartphone size={14} className="text-blue-600" />
-            <span>{lang === 'zh' ? '💡 如何在 iPad 上像独立 App 一样玩：' : '💡 Tip: Add to iPad Home Screen'}</span>
+            <span>
+              {lang === 'fr' ? '💡 Astuce : Ajouter à l\'écran d\'accueil sur iPad' : lang === 'zh' ? '💡 如何在 iPad 上像独立 App 一样玩：' : '💡 Tip: Add to iPad Home Screen'}
+            </span>
           </div>
           <ol className="list-decimal list-inside space-y-1 text-[11px] font-medium text-slate-600">
-            <li>{lang === 'zh' ? '在 Safari 浏览器中打开该链接' : 'Open the link in Safari on iPad / iPhone'}</li>
-            <li>{lang === 'zh' ? '点击右上角“分享”图标（带有向上箭头的方框）' : 'Tap the Share icon (square with arrow pointing up)'}</li>
-            <li>{lang === 'zh' ? '滑动选择“添加到主屏幕 (Add to Home Screen)”' : 'Select "Add to Home Screen" to install it like an app!'}</li>
+            <li>
+              {lang === 'fr'
+                ? 'Ouvre le lien dans Safari sur iPad / iPhone'
+                : lang === 'zh'
+                ? '在 Safari 浏览器中打开该链接'
+                : 'Open the link in Safari on iPad / iPhone'}
+            </li>
+            <li>
+              {lang === 'fr'
+                ? 'Appuie sur l\'icône Partager (carré avec flèche vers le haut)'
+                : lang === 'zh'
+                ? '点击右上角“分享”图标（带有向上箭头的方框）'
+                : 'Tap the Share icon (square with arrow pointing up)'}
+            </li>
+            <li>
+              {lang === 'fr'
+                ? 'Choisis "Sur l\'écran d\'accueil" pour l\'installer comme une vraie application !'
+                : lang === 'zh'
+                ? '滑动选择“添加到主屏幕 (Add to Home Screen)”'
+                : 'Select "Add to Home Screen" to install it like an app!'}
+            </li>
           </ol>
         </div>
       </div>

@@ -3,7 +3,7 @@ import React from 'react';
 interface CountryIllustrationProps {
   countryId: string;
   name: string;
-  lang?: 'en' | 'zh';
+  lang?: 'en' | 'fr' | 'zh';
 }
 
 export const CountryIllustration: React.FC<CountryIllustrationProps> = ({ countryId, name, lang = 'en' }) => {

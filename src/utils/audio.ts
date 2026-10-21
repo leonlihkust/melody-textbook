@@ -122,10 +122,10 @@ export function playClickSound() {
   osc.stop(ctx.currentTime + 0.05);
 }
 
-/** Web Speech API English Read-Aloud */
+/** Web Speech API Multilingual Read-Aloud (EN / FR / ZH) */
 let currentUtterance: SpeechSynthesisUtterance | null = null;
 
-export function speakEnglish(text: string, onEnd?: () => void) {
+export function speakText(text: string, lang: 'en' | 'fr' | 'zh' = 'en', onEnd?: () => void) {
   if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
     if (onEnd) onEnd();
     return;
@@ -134,16 +134,34 @@ export function speakEnglish(text: string, onEnd?: () => void) {
   // Cancel any running speech
   window.speechSynthesis.cancel();
 
-  // Strip math symbols or formatting for smooth speech if needed
-  const cleanedText = text
-    .replace(/[×*]/g, ' times ')
-    .replace(/[÷/]/g, ' divided by ')
-    .replace(/=/g, ' equals ')
-    .replace(/±/g, ' plus or minus ')
-    .replace(/\$/g, ' dollars ');
+  // Strip math symbols or formatting for smooth speech based on language
+  let cleanedText = text;
+  if (lang === 'fr') {
+    cleanedText = cleanedText
+      .replace(/[×*]/g, ' fois ')
+      .replace(/[÷/]/g, ' divisé par ')
+      .replace(/=/g, ' égale ')
+      .replace(/±/g, ' plus ou moins ')
+      .replace(/\$/g, ' dollars ');
+  } else if (lang === 'zh') {
+    cleanedText = cleanedText
+      .replace(/[×*]/g, ' 乘以 ')
+      .replace(/[÷/]/g, ' 除以 ')
+      .replace(/=/g, ' 等于 ')
+      .replace(/±/g, ' 正负 ')
+      .replace(/\$/g, ' 加元 ');
+  } else {
+    cleanedText = cleanedText
+      .replace(/[×*]/g, ' times ')
+      .replace(/[÷/]/g, ' divided by ')
+      .replace(/=/g, ' equals ')
+      .replace(/±/g, ' plus or minus ')
+      .replace(/\$/g, ' dollars ');
+  }
 
   const utterance = new SpeechSynthesisUtterance(cleanedText);
-  utterance.lang = 'en-US';
+  // French Canadian for Ontario French immersion context, fallback to fr-FR
+  utterance.lang = lang === 'fr' ? 'fr-CA' : lang === 'zh' ? 'zh-CN' : 'en-CA';
   utterance.rate = 0.95; // Friendly, clear pacing for 9-year-olds
   utterance.pitch = 1.05;
 
@@ -158,6 +176,10 @@ export function speakEnglish(text: string, onEnd?: () => void) {
 
   currentUtterance = utterance;
   window.speechSynthesis.speak(utterance);
+}
+
+export function speakEnglish(text: string, onEnd?: () => void) {
+  speakText(text, 'en', onEnd);
 }
 
 export function stopSpeaking() {

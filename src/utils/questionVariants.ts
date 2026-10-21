@@ -55,15 +55,20 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         tier: 'easy',
         tierLabelEn: 'Easy',
         tierLabelZh: '基础',
+        tierLabelFr: 'Facile',
         questionEn: `In the number ${num.toLocaleString()}, what is the value of the digit ${targetDigit}?`,
         questionZh: `在数字 ${num.toLocaleString()} 中，数字 ${targetDigit} 的数值是多少？`,
+        questionFr: `Dans le nombre ${num.toLocaleString('fr-CA')}, quelle est la valeur de position du chiffre ${targetDigit} ?`,
         optionsEn: shuffled,
         optionsZh: shuffled,
+        optionsFr: shuffled,
         correctIndex: correctIdx,
         secretClueEn: `The digit ${targetDigit} is in the hundreds column: ${targetDigit} × 100.`,
         secretClueZh: `数字 ${targetDigit} 位于百位（Hundreds）：${targetDigit} × 100。`,
+        secretClueFr: `Le chiffre ${targetDigit} est dans la colonne des centaines : ${targetDigit} × 100.`,
         explanationEn: `The digit ${targetDigit} is in the hundreds position, so its value is ${correctVal}.`,
         explanationZh: `数字 ${targetDigit} 位于百位，因此其代表的数值为 ${correctVal}。`,
+        explanationFr: `Le chiffre ${targetDigit} est à la position des centaines, sa valeur est donc de ${correctVal}.`,
         visual: { type: 'table', content: `Th: ${thousands} | H: ${hundreds} | T: ${tens} | O: ${ones}`, subtext: 'Place Value Chart' }
       };
     }
@@ -89,15 +94,20 @@ export function generateQuestionVariant(baseQ: QuestionItem, week: number, tier:
         tier: 'med',
         tierLabelEn: 'Medium',
         tierLabelZh: '进阶',
+        tierLabelFr: 'Moyen',
         questionEn: `Millen Woods recorded ${th} thousands, ${tens} tens, and ${ones} ones of items. What number is this?`,
         questionZh: `米伦伍兹记录了 ${th} 个千、${tens} 个十和 ${ones} 个一，这个总数是多少？`,
+        questionFr: `L'école Millen Woods a comptabilisé ${th} milliers, ${tens} dizaines et ${ones} unités. Quel est ce nombre total ?`,
         optionsEn: shuffled,
         optionsZh: shuffled.map(o => `${o}`),
+        optionsFr: shuffled,
         correctIndex,
         secretClueEn: `${tens} tens = ${tens * 10}. Add: ${th * 1000} + ${tens * 10} + ${ones}.`,
         secretClueZh: `${tens} 个十等于 ${tens * 10}。相加：${th * 1000} + ${tens * 10} + ${ones}。`,
+        secretClueFr: `${tens} dizaines = ${tens * 10}. Additionne : ${th * 1000} + ${tens * 10} + ${ones}.`,
         explanationEn: `${th * 1000} + ${tens * 10} + ${ones} = ${total.toLocaleString()}.`,
-        explanationZh: `${th * 1000} + ${tens * 10} + ${ones} = ${total.toLocaleString()}。`
+        explanationZh: `${th * 1000} + ${tens * 10} + ${ones} = ${total.toLocaleString()}。`,
+        explanationFr: `${th * 1000} + ${tens * 10} + ${ones} = ${total.toLocaleString('fr-CA')}.`
       };
     }
 

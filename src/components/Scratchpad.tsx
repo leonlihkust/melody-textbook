@@ -1,10 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Pencil, Eraser, Trash2, RotateCcw, Grid, Maximize2, Minimize2, X, Ruler } from 'lucide-react';
 
+import { Language, I18N } from '../utils/i18n';
+
 interface ScratchpadProps {
   isOpen: boolean;
   onClose: () => void;
-  lang: 'en' | 'zh';
+  lang: Language;
 }
 
 const COLORS = [
@@ -150,10 +152,10 @@ export const Scratchpad: React.FC<ScratchpadProps> = ({ isOpen, onClose, lang })
           <span className="text-xl">✏️</span>
           <div>
             <h3 className="font-comic text-base font-bold text-slate-900 leading-tight">
-              {lang === 'zh' ? '水手草稿演算本' : 'Mariner Math Scratchpad'}
+              {I18N[lang].scratchpad.title}
             </h3>
             <span className="text-[11px] font-medium text-amber-950">
-              {lang === 'zh' ? '自由涂鸦、竖式草稿与网格图纸' : 'Doodle, scratch work & grid guide'}
+              {I18N[lang].scratchpad.subtitle}
             </span>
           </div>
         </div>
@@ -170,7 +172,7 @@ export const Scratchpad: React.FC<ScratchpadProps> = ({ isOpen, onClose, lang })
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg bg-rose-400 border-2 border-slate-900 hover:bg-rose-500 text-white transition-colors"
-            title="Close"
+            title={I18N[lang].scratchpad.close}
             aria-label="Close scratchpad"
           >
             <X size={16} />
@@ -189,7 +191,7 @@ export const Scratchpad: React.FC<ScratchpadProps> = ({ isOpen, onClose, lang })
             }`}
           >
             <Pencil size={13} />
-            <span>{lang === 'zh' ? '铅笔' : 'Pen'}</span>
+            <span>{I18N[lang].scratchpad.pen}</span>
           </button>
 
           <button
@@ -199,7 +201,7 @@ export const Scratchpad: React.FC<ScratchpadProps> = ({ isOpen, onClose, lang })
             }`}
           >
             <Eraser size={13} />
-            <span>{lang === 'zh' ? '橡皮' : 'Eraser'}</span>
+            <span>{I18N[lang].scratchpad.eraser}</span>
           </button>
 
           {/* Grid pattern switch */}
@@ -223,7 +225,7 @@ export const Scratchpad: React.FC<ScratchpadProps> = ({ isOpen, onClose, lang })
             title="Virtual ruler guide"
           >
             <Ruler size={13} />
-            <span>{lang === 'zh' ? '标尺' : 'Ruler'}</span>
+            <span>{I18N[lang].scratchpad.ruler}</span>
           </button>
         </div>
 

@@ -1,3 +1,6 @@
+import { FRENCH_WEEK_META, FRENCH_QUESTION_DICTIONARY } from './mathFrenchQuestions';
+
+export type Language = 'en' | 'fr' | 'zh';
 export type DifficultyTier = 'easy' | 'med' | 'boss' | 'olympiad';
 
 export interface VisualData {
@@ -11,15 +14,20 @@ export interface QuestionItem {
   tier: DifficultyTier;
   tierLabelEn: string;
   tierLabelZh: string;
+  tierLabelFr?: string;
   questionEn: string;
   questionZh: string;
+  questionFr?: string;
   optionsEn: string[];
   optionsZh: string[];
+  optionsFr?: string[];
   correctIndex: number;
   secretClueEn: string;
   secretClueZh: string;
+  secretClueFr?: string;
   explanationEn: string;
   explanationZh: string;
+  explanationFr?: string;
   visual?: VisualData;
 }
 
@@ -29,12 +37,16 @@ export interface WeekTopic {
   strandKey: 'number' | 'geometry' | 'data' | 'operations' | 'fractions' | 'algebra' | 'measurement' | 'financial' | 'coding';
   strandEn: string;
   strandZh: string;
+  strandFr?: string;
   titleEn: string;
   titleZh: string;
+  titleFr?: string;
   landmark: string;
   landmarkZh: string;
+  landmarkFr?: string;
   descriptionEn: string;
   descriptionZh: string;
+  descriptionFr?: string;
   questions: QuestionItem[];
 }
 
@@ -46,7 +58,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Number Sense",
     "strandZh": "数感与位值",
     "titleEn": "Mariner Place Value Patrol",
-    "titleZh": "水手万以内数位巡航",
+    "titleZh": "万以内数位",
     "landmark": "Millen Woods Public School",
     "landmarkZh": "米伦伍兹公立学校",
     "descriptionEn": "Explore 4-digit numbers up to 10,000 using standard and expanded form around Millen Woods!",
@@ -191,7 +203,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Number Sense",
     "strandZh": "数位比较与排序",
     "titleEn": "Comparing & Ordering Mariners Fleet",
-    "titleZh": "水手舰队战舰吨位大比拼",
+    "titleZh": "大数比大小",
     "landmark": "Laurel Creek Conservation Area",
     "landmarkZh": "月桂溪保护区",
     "descriptionEn": "Compare 4-digit numbers using <, >, and = along Laurel Creek trails!",
@@ -331,7 +343,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Number Sense",
     "strandZh": "数轴与四舍五入",
     "titleEn": "ION Light Rail Number Line Rounding",
-    "titleZh": "ION 轻轨数轴与四舍五入探秘",
+    "titleZh": "四舍五入",
     "landmark": "ION LRT Conestoga Station",
     "landmarkZh": "ION 轻轨 Conestoga 总站",
     "descriptionEn": "Master rounding to the nearest 10, 100, and 1,000 using the ION Light Rail stations number line!",
@@ -476,7 +488,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Addition & Subtraction",
     "strandZh": "加减心算与估算",
     "titleEn": "Mental Math & Compensation Chains",
-    "titleZh": "加法心算与拆补法大作战",
+    "titleZh": "心算拆补法",
     "landmark": "RIM Park Sportsplex",
     "landmarkZh": "RIM Park 综合体育公园",
     "descriptionEn": "Use friendly numbers, compensation (+1/-1), and expanded addition strategies at RIM Park!",
@@ -616,7 +628,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Addition & Subtraction",
     "strandZh": "多位数加减与实际应用",
     "titleEn": "Mariner Voyage Log Multi-Digit Ops",
-    "titleZh": "大数退位减法与水手航海日记",
+    "titleZh": "退位减法",
     "landmark": "Conestogo River Trail",
     "landmarkZh": "科尼斯托戈河步道",
     "descriptionEn": "Regroup across zeros and solve multi-step word problems from the Waterloo Pioneer Memorial!",
@@ -756,7 +768,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Geometric Reasoning",
     "strandZh": "几何角与90°基准",
     "titleEn": "Benchmark Angles: Acute, Right & Obtuse",
-    "titleZh": "锐角、直角、钝角与时钟基准",
+    "titleZh": "角与时钟基准",
     "landmark": "Waterloo City Hall Clock Tower",
     "landmarkZh": "滑铁卢市政厅钟楼",
     "descriptionEn": "Benchmark angles against 90° right angles using the hands of the Waterloo Clock Tower!",
@@ -896,7 +908,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Geometric Reasoning",
     "strandZh": "四边形分类与对称轴",
     "titleEn": "Quadrilateral Quest & Lines of Symmetry",
-    "titleZh": "四边形家族谱系与对称轴探秘",
+    "titleZh": "四边形与对称",
     "landmark": "Perimeter Institute for Theoretical Physics",
     "landmarkZh": "圆周理论物理研究所",
     "descriptionEn": "Classify parallelograms, rhombuses, trapezoids, and test lines of symmetry at Perimeter Institute!",
@@ -1036,7 +1048,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Location & Movement",
     "strandZh": "坐标网格与平移",
     "titleEn": "Mariner Grid Coordinates & Treasure Map",
-    "titleZh": "水手航海网格坐标与宝藏定位",
+    "titleZh": "网格坐标寻宝",
     "landmark": "Uptown Waterloo Silver Lake",
     "landmarkZh": "上城滑铁卢银湖",
     "descriptionEn": "Plot and read (x, y) coordinates and execute translations (e.g. 3 right, 2 up) around Silver Lake!",
@@ -1176,7 +1188,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Multiplication & Division",
     "strandZh": "乘法阵列与连续翻倍",
     "titleEn": "Tile Arrays & Doubling Chains",
-    "titleZh": "矩形阵列与连续翻倍心算法",
+    "titleZh": "乘法阵列与翻倍",
     "landmark": "St. Jacobs Farmers Market",
     "landmarkZh": "圣雅各布农贸市场",
     "descriptionEn": "Build rectangular arrays and use the 2x -> 4x -> 8x doubling strategy on market apple crates!",
@@ -1316,7 +1328,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Data Literacy",
     "strandZh": "象形图与比例标尺",
     "titleEn": "Pictograph Scaling & Laurel Creek Bird Watch",
-    "titleZh": "象形统计图标尺换算与月桂溪观鸟",
+    "titleZh": "象形图与统计",
     "landmark": "Laurel Creek Nature Trail",
     "landmarkZh": "月桂溪自然观察步道",
     "descriptionEn": "Interpret pictographs with many-to-one keys (e.g. 1 bird icon = 4 observed birds) and bar graphs!",
@@ -1456,7 +1468,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Multiplication & Division",
     "strandZh": "面积模型与多位数乘法",
     "titleEn": "Area Model Multiplication",
-    "titleZh": "矩形分块面积模型与多位数乘法",
+    "titleZh": "面积模型乘法",
     "landmark": "Waterloo Memorial Recreation Complex",
     "landmarkZh": "滑铁卢纪念休闲中心",
     "descriptionEn": "Decompose 2-digit by 1-digit and 2-digit by 2-digit products into visual rectangular areas!",
@@ -1601,7 +1613,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Multiplication & Division",
     "strandZh": "有余数除法与生活分配",
     "titleEn": "Division with Remainders & School Bus Logic",
-    "titleZh": "有余数除法与校车乘车决策",
+    "titleZh": "有余数除法",
     "landmark": "Millen Woods Mariners Bus Loop",
     "landmarkZh": "米伦伍兹校车环线",
     "descriptionEn": "Interpret remainders in real situations: when do you round up, discard, or keep the remainder?",
@@ -1741,7 +1753,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Proportional Reasoning",
     "strandZh": "正比例比率表与倍数放大",
     "titleEn": "Ratio Tables & Market Apple Cider Scaling",
-    "titleZh": "生活中的正比例与比率表 —— 苹果工坊配方缩放",
+    "titleZh": "生活比率表",
     "landmark": "St. Jacobs Cider Mill",
     "landmarkZh": "圣雅各布农庄工坊",
     "descriptionEn": "Use multiplicative thinking to scale recipes and fill in ratio tables!",
@@ -1881,7 +1893,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Fractional Reasoning",
     "strandZh": "真分数、假分数与带分数",
     "titleEn": "Fractions of a Whole & Mixed Numbers",
-    "titleZh": "真假分数、带分数互化与披萨派对",
+    "titleZh": "分数与披萨",
     "landmark": "Mariners Cafeteria",
     "landmarkZh": "米伦伍兹水手餐厅",
     "descriptionEn": "Represent fractions greater than 1 as improper fractions and mixed numbers (e.g., 7/4 = 1 3/4)!",
@@ -2021,7 +2033,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Decimals & Tenths",
     "strandZh": "十分之一小数与加减法",
     "titleEn": "Decimal Tenths & Metro Dollar Store Change",
-    "titleZh": "十分之一小数加减与一元店找零",
+    "titleZh": "小数与找零",
     "landmark": "Conestoga Mall Shopping Centre",
     "landmarkZh": "Conestoga 购物中心",
     "descriptionEn": "Connect tenths fractions (e.g. 3/10 = 0.3) to money and number line decimal positions!",
@@ -2161,7 +2173,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Patterns & Relations",
     "strandZh": "数列规律与输入输出机",
     "titleEn": "Growing Patterns & Function Machine",
-    "titleZh": "递增数列规律与函数机器",
+    "titleZh": "递增规律与机器",
     "landmark": "University of Waterloo Davis Centre",
     "landmarkZh": "滑铁卢大学戴维斯计算机中心",
     "descriptionEn": "Discover pattern rules (start at X and add Y) and tables of values at UW Davis Centre!",
@@ -2301,7 +2313,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Equations & Balance",
     "strandZh": "天平平衡方程与未知数",
     "titleEn": "Balance Scales & Mystery Variables",
-    "titleZh": "天平平衡方程与未知数探秘",
+    "titleZh": "天平与方程",
     "landmark": "Perimeter Institute Physics Lab",
     "landmarkZh": "圆周研究所物理实验室",
     "descriptionEn": "Keep the balance equal! Solve for unknown variables on two-pan balance scales.",
@@ -2441,7 +2453,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Fractions of a Set",
     "strandZh": "集合的分数与部分量",
     "titleEn": "Fractions of a Set & Team Jerseys",
-    "titleZh": "集合的分数与球队球衣分配",
+    "titleZh": "集合的分数表示",
     "landmark": "Manulife Sportsplex Fields",
     "landmarkZh": "宏利金融体育场",
     "descriptionEn": "Calculate fractional parts of whole sets (e.g. 3/5 of 25 soccer players)!",
@@ -2581,7 +2593,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Measurement & Geometry",
     "strandZh": "长方形周长与面积",
     "titleEn": "Perimeter vs. Area: Mariners Garden Plots",
-    "titleZh": "米伦伍兹生态菜园的周长与面积",
+    "titleZh": "周长与面积",
     "landmark": "Millen Woods Mariners Eco-Garden",
     "landmarkZh": "米伦伍兹生态菜园",
     "descriptionEn": "Distinguish between distance around (perimeter) and flat space covered (area) in metric units!",
@@ -2721,7 +2733,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Elapsed Time",
     "strandZh": "经过时间与作息计算",
     "titleEn": "Elapsed Time on Laurel Creek Trails",
-    "titleZh": "月桂溪森林步道的经过时间计算",
+    "titleZh": "经过时间计算",
     "landmark": "Laurel Creek Nature Centre",
     "landmarkZh": "月桂溪自然教育中心",
     "descriptionEn": "Calculate start time, end time, and duration across hours and minutes on hiking trails!",
@@ -2861,7 +2873,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Probability",
     "strandZh": "五级概率连续体与公平游戏",
     "titleEn": "5-Level Probability Continuum & Fair Spinners",
-    "titleZh": "五级概率连续体与公平转盘游戏",
+    "titleZh": "概率与转盘游戏",
     "landmark": "Millen Woods Mariners Carnival",
     "landmarkZh": "米伦伍兹狂欢节",
     "descriptionEn": "Categorize outcomes using the 5-level probability continuum: Impossible, Unlikely, Equally Likely, Likely, Certain!",
@@ -3001,7 +3013,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Coding & Movement",
     "strandZh": "编程循环与网格位移",
     "titleEn": "Pseudocode REPEAT Loops & Grid Navigation",
-    "titleZh": "编程重复循环嵌套与网格位移",
+    "titleZh": "编程重复循环",
     "landmark": "Communitech Innovation Hub",
     "landmarkZh": "Communitech 科技创新中心",
     "descriptionEn": "Trace pseudocode algorithms with REPEAT loops and calculate total steps moved on a grid!",
@@ -3141,7 +3153,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Financial Literacy",
     "strandZh": "加拿大货币找零与精明消费",
     "titleEn": "Canadian Currency & Best Buy Unit Pricing",
-    "titleZh": "加拿大货币找零与“精明比价”单价对比",
+    "titleZh": "货币找零与单价",
     "landmark": "Uptown Waterloo Farmers Market",
     "landmarkZh": "上城滑铁卢市集",
     "descriptionEn": "Count Canadian bills and coins (loonies, toonies), calculate change, and find the Best Buy unit price!",
@@ -3281,7 +3293,7 @@ export const WRDSB_WEEKS: WeekTopic[] = [
     "strandEn": "Capstone Championship",
     "strandZh": "全能水手数学总决赛",
     "titleEn": "Grand Mariners Championship & Graduation",
-    "titleZh": "米伦伍兹水手数学大阅兵与荣誉毕业",
+    "titleZh": "水手数学大毕业",
     "landmark": "Millen Woods Mariners Grand Stage",
     "landmarkZh": "米伦伍兹水手大舞台",
     "descriptionEn": "The ultimate Grade 4 master quest combining all strands into real-world Waterloo problem solving!",
@@ -3426,6 +3438,16 @@ function placeOptionAtTarget(opts: string[], target: number): string[] {
   return res;
 }
 
+function getFrenchTierLabel(tier: DifficultyTier): string {
+  switch (tier) {
+    case 'easy': return 'Facile';
+    case 'med': return 'Moyen';
+    case 'boss': return 'Défi';
+    case 'olympiad': return 'Olympiade';
+    default: return 'Standard';
+  }
+}
+
 // Helper to fill in weeks 1..40 smoothly for the adventure map
 export function getAllWeeks(): WeekTopic[] {
   const result: WeekTopic[] = [];
@@ -3433,13 +3455,40 @@ export function getAllWeeks(): WeekTopic[] {
   WRDSB_WEEKS.forEach(w => knownWeeksMap.set(w.week, w));
 
   for (let i = 1; i <= 40; i++) {
+    let weekTopic: WeekTopic;
     if (knownWeeksMap.has(i)) {
-      result.push(knownWeeksMap.get(i)!);
+      weekTopic = knownWeeksMap.get(i)!;
     } else {
-      // Interpolate topic according to WRDSB Grade 4 seasonal strands
-      const baseTopic = generateWeekTopic(i);
-      result.push(baseTopic);
+      weekTopic = generateWeekTopic(i);
     }
+
+    const frMeta = FRENCH_WEEK_META[i];
+    const enrichedQuestions = weekTopic.questions.map(q => {
+      const frQ = FRENCH_QUESTION_DICTIONARY[q.id];
+      if (frQ) {
+        return {
+          ...q,
+          questionFr: frQ.questionFr,
+          optionsFr: frQ.optionsFr,
+          secretClueFr: frQ.secretClueFr,
+          explanationFr: frQ.explanationFr,
+          tierLabelFr: getFrenchTierLabel(q.tier),
+        };
+      }
+      return {
+        ...q,
+        tierLabelFr: getFrenchTierLabel(q.tier),
+      };
+    });
+
+    result.push({
+      ...weekTopic,
+      titleFr: frMeta?.titleFr || weekTopic.titleEn,
+      strandFr: frMeta?.strandFr || weekTopic.strandEn,
+      landmarkFr: frMeta?.landmarkFr || weekTopic.landmark,
+      descriptionFr: frMeta?.descriptionFr || weekTopic.descriptionEn,
+      questions: enrichedQuestions,
+    });
   }
   return result;
 }
@@ -3455,44 +3504,44 @@ function generateWeekTopic(weekNum: number): WeekTopic {
   let strandEn = 'Number Sense';
   let strandZh = '数感与运算';
   let titleEn = `Mariner Week ${weekNum} Quest`;
-  let titleZh = `第 ${weekNum} 周水手专项探险`;
+  let titleZh = `第 ${weekNum} 周：水手探险`;
 
   if (weekNum >= 21 && weekNum <= 24) {
     strandKey = 'fractions';
     strandEn = 'Decimals & Operations';
     strandZh = '小数与日常应用';
     titleEn = `Decimals & Market Measurements (Wk ${weekNum})`;
-    titleZh = `第 ${weekNum} 周：小数换算与实际应用`;
+    titleZh = `第 ${weekNum} 周：小数换算`;
   } else if (weekNum >= 26 && weekNum <= 29) {
     strandKey = 'algebra';
     strandEn = 'Patterns & Algebra';
     strandZh = '代数方程与规律';
     titleEn = `Equations & Pattern Puzzles (Wk ${weekNum})`;
-    titleZh = `第 ${weekNum} 周：等式方程与规律探索`;
+    titleZh = `第 ${weekNum} 周：等式与规律`;
   } else if (weekNum >= 31 && weekNum <= 32) {
     strandKey = 'measurement';
     strandEn = 'Metric Measurement';
     strandZh = '公制测量与体积容量';
     titleEn = `Metric Units & Capacity (Wk ${weekNum})`;
-    titleZh = `第 ${weekNum} 周：毫米、厘米、升与毫升`;
+    titleZh = `第 ${weekNum} 周：长度与容量`;
   } else if (weekNum === 34) {
     strandKey = 'data';
     strandEn = 'Probability Experiments';
     strandZh = '概率模拟实验';
     titleEn = `Probability & Spinners (Wk ${weekNum})`;
-    titleZh = `第 ${weekNum} 周：公平游戏与概率统计`;
+    titleZh = `第 ${weekNum} 周：概率统计`;
   } else if (weekNum === 36) {
     strandKey = 'coding';
     strandEn = 'Coding & Coordinates';
     strandZh = '编程逻辑与网格位移';
     titleEn = `Loop Coding & Grid Motion (Wk ${weekNum})`;
-    titleZh = `第 ${weekNum} 周：编程嵌套循环与位置`;
+    titleZh = `第 ${weekNum} 周：编程与网格`;
   } else if (weekNum >= 38 && weekNum <= 39) {
     strandKey = 'financial';
     strandEn = 'Financial Math';
     strandZh = '零花钱储蓄与消费规划';
     titleEn = `Financial Planning & Change (Wk ${weekNum})`;
-    titleZh = `第 ${weekNum} 周：零花钱管理与找零`;
+    titleZh = `第 ${weekNum} 周：预算与找零`;
   }
 
   // Create a template 5 questions for this week with balanced correct positions
@@ -3541,83 +3590,110 @@ function generateWeekTopic(weekNum: number): WeekTopic {
     titleZh,
     landmark: 'Laurel Creek & Waterloo Woods',
     landmarkZh: '月桂溪与滑铁卢林间步道',
+    landmarkFr: 'Sentier du ruisseau Laurel et bois de Waterloo',
     descriptionEn: `Deep dive into Grade 4 ${strandEn} aligned with WRDSB Curriculum for Week ${weekNum}!`,
     descriptionZh: `紧扣滑铁卢教育局四年级教学大纲第 ${weekNum} 周核心技能，完成水手5题夺宝！`,
+    descriptionFr: `Explore les concepts clés de 4e année (${strandEn}) selon le programme du WRDSB pour la Semaine ${weekNum} !`,
     questions: [
       {
         id: `w${weekNum}-q1`,
         tier: 'easy',
         tierLabelEn: 'Easy',
         tierLabelZh: '基础',
+        tierLabelFr: 'Facile',
         questionEn: `Week ${weekNum} Practice: Calculate (${weekNum} × 3) + 12 = ?`,
         questionZh: `第 ${weekNum} 周基础演练：计算 (${weekNum} × 3) + 12 = ？`,
+        questionFr: `Pratique de la Semaine ${weekNum} : Calcule (${weekNum} × 3) + 12 = ?`,
         optionsEn: placeOptionAtTarget([q1Ans, q1Distractors[0], q1Distractors[1], q1Distractors[2]], q1Target),
         optionsZh: placeOptionAtTarget([q1Ans, q1Distractors[0], q1Distractors[1], q1Distractors[2]], q1Target),
+        optionsFr: placeOptionAtTarget([q1Ans, q1Distractors[0], q1Distractors[1], q1Distractors[2]], q1Target),
         correctIndex: q1Target,
         secretClueEn: `Multiply first: ${weekNum} × 3 = ${weekNum * 3}. Then add 12!`,
         secretClueZh: `先乘后加：${weekNum} × 3 = ${weekNum * 3}，然后加上 12。`,
+        secretClueFr: `Multiplie d'abord : ${weekNum} × 3 = ${weekNum * 3}. Ajoute ensuite 12 !`,
         explanationEn: `(${weekNum} × 3) + 12 = ${q1Ans}.`,
-        explanationZh: `(${weekNum} × 3) + 12 = ${q1Ans}。`
+        explanationZh: `(${weekNum} × 3) + 12 = ${q1Ans}。`,
+        explanationFr: `(${weekNum} × 3) + 12 = ${q1Ans}.`
       },
       {
         id: `w${weekNum}-q2`,
         tier: 'med',
         tierLabelEn: 'Medium',
         tierLabelZh: '进阶',
+        tierLabelFr: 'Moyen',
         questionEn: `Round ${weekNum * 125} to the nearest 100.`,
         questionZh: `将数字 ${weekNum * 125} 四舍五入到最近的百位。`,
+        questionFr: `Arrondis ${weekNum * 125} à la centaine la plus proche.`,
         optionsEn: placeOptionAtTarget(q2Raw, q2Target),
         optionsZh: placeOptionAtTarget(q2Raw, q2Target),
+        optionsFr: placeOptionAtTarget(q2Raw, q2Target),
         correctIndex: q2Target,
         secretClueEn: 'Look at the tens digit: if it is 5 or more, round up; otherwise round down.',
         secretClueZh: '观察十位数字：如果大于等于5则向百位进1，否则舍去。',
+        secretClueFr: 'Regarde le chiffre des dizaines : s\'il est de 5 ou plus, arrondis vers le haut ; sinon vers le bas.',
         explanationEn: `${weekNum * 125} rounded to nearest 100 is ${Math.round((weekNum * 125) / 100) * 100}.`,
-        explanationZh: `四舍五入后为 ${Math.round((weekNum * 125) / 100) * 100}。`
+        explanationZh: `四舍五入后为 ${Math.round((weekNum * 125) / 100) * 100}。`,
+        explanationFr: `${weekNum * 125} arrondi à la centaine près donne ${Math.round((weekNum * 125) / 100) * 100}.`
       },
       {
         id: `w${weekNum}-q3`,
         tier: 'boss',
         tierLabelEn: 'Boss',
         tierLabelZh: '挑战',
+        tierLabelFr: 'Défi',
         questionEn: `A rectangular garden has length ${weekNum + 5} m and width 8 m. What is its Perimeter?`,
         questionZh: `一个长方形花园的长为 ${weekNum + 5} 米，宽为 8 米。它的周长是多少米？`,
+        questionFr: `Un jardin rectangulaire mesure ${weekNum + 5} m de long et 8 m de large. Quel est son périmètre ?`,
         optionsEn: placeOptionAtTarget(q3RawEn, q3Target),
         optionsZh: placeOptionAtTarget(q3RawZh, q3Target),
+        optionsFr: placeOptionAtTarget(q3RawEn, q3Target),
         correctIndex: q3Target,
         secretClueEn: `Perimeter = 2 × (Length + Width) = 2 × (${weekNum + 5} + 8) m.`,
         secretClueZh: `周长 = 2 × (长 + 宽) = 2 × (${weekNum + 5} + 8) 米。`,
+        secretClueFr: `Périmètre = 2 × (Longueur + Largeur) = 2 × (${weekNum + 5} + 8) m.`,
         explanationEn: `2 × (${weekNum + 13}) = ${2 * (weekNum + 13)} m.`,
-        explanationZh: `周长为 ${2 * (weekNum + 13)} 米。`
+        explanationZh: `周长为 ${2 * (weekNum + 13)} 米。`,
+        explanationFr: `2 × (${weekNum + 13}) = ${2 * (weekNum + 13)} m.`
       },
       {
         id: `w${weekNum}-q4`,
         tier: 'olympiad',
         tierLabelEn: 'G4-5 Advanced',
         tierLabelZh: '拔高',
+        tierLabelFr: 'Olympiade',
         questionEn: `Solve for x: 4x + ${weekNum} = ${40 + weekNum}.`,
         questionZh: `求解未知数 x：4x + ${weekNum} = ${40 + weekNum}。`,
+        questionFr: `Trouve la valeur de x : 4x + ${weekNum} = ${40 + weekNum}.`,
         optionsEn: placeOptionAtTarget(q4Raw, q4Target),
         optionsZh: placeOptionAtTarget(q4Raw, q4Target),
+        optionsFr: placeOptionAtTarget(q4Raw, q4Target),
         correctIndex: q4Target,
         secretClueEn: `Subtract ${weekNum} from both sides: 4x = 40. Then divide by 4!`,
         secretClueZh: `两边同时减去 ${weekNum}：4x = 40。两边除以 4 得 x = 10。`,
+        secretClueFr: `Soustrais ${weekNum} des deux côtés : 4x = 40. Divise ensuite par 4 !`,
         explanationEn: `4x = 40, so x = 10.`,
-        explanationZh: '4x = 40，因此 x = 10。'
+        explanationZh: '4x = 40，因此 x = 10。',
+        explanationFr: '4x = 40, donc x = 10.'
       },
       {
         id: `w${weekNum}-q5`,
         tier: 'easy',
         tierLabelEn: 'Chest Key',
         tierLabelZh: '宝箱题',
+        tierLabelFr: 'Clé du Coffre',
         questionEn: `Quick Calculation: What is ${weekNum} × 10?`,
         questionZh: `快速心算宝箱钥匙：${weekNum} × 10 等于多少？`,
+        questionFr: `Calcul rapide de la clé du coffre : Combien font ${weekNum} × 10 ?`,
         optionsEn: placeOptionAtTarget(q5Raw, q5Target),
         optionsZh: placeOptionAtTarget(q5Raw, q5Target),
+        optionsFr: placeOptionAtTarget(q5Raw, q5Target),
         correctIndex: q5Target,
         secretClueEn: 'Place a 0 at the end of the number!',
         secretClueZh: '乘 10 只需在末尾添一个 0！',
+        secretClueFr: 'Ajoute simplement un 0 à la fin du nombre !',
         explanationEn: `${weekNum} × 10 = ${weekNum * 10}.`,
-        explanationZh: `${weekNum} × 10 = ${weekNum * 10}。`
+        explanationZh: `${weekNum} × 10 = ${weekNum * 10}。`,
+        explanationFr: `${weekNum} × 10 = ${weekNum * 10}.`
       }
     ]
   };
