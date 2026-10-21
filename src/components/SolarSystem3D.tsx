@@ -9,6 +9,7 @@ import {
   Compass,
   Volume2,
   X,
+  ChevronLeft,
   ChevronRight,
   Orbit,
 } from 'lucide-react';
@@ -200,6 +201,33 @@ function createPlanetTexture(type: string): THREE.CanvasTexture {
     for (let i = 0; i < 20; i++) {
       ctx.fillRect(Math.random() * 512, Math.random() * 256, Math.random() * 60 + 20, 3);
     }
+  } else if (type === 'pluto') {
+    // Pluto: Rust-brown tinted nitrogen/methane ice surface with the famous "Heart" (Tombaugh Regio)
+    const grad = ctx.createLinearGradient(0, 0, 512, 256);
+    grad.addColorStop(0, '#78350f'); // Dark reddish-brown tholin terrain (Cthulhu Macula)
+    grad.addColorStop(0.35, '#d97706');
+    grad.addColorStop(0.65, '#fef3c7'); // Pale icy plains
+    grad.addColorStop(1, '#92400e');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 512, 256);
+
+    // Iconic Bright White Nitrogen Ice "Heart" (Tombaugh Regio / Sputnik Planitia)
+    ctx.fillStyle = '#f8fafc';
+    ctx.beginPath();
+    ctx.moveTo(256, 120);
+    ctx.bezierCurveTo(256, 105, 240, 95, 225, 95);
+    ctx.bezierCurveTo(200, 95, 195, 120, 195, 120);
+    ctx.bezierCurveTo(195, 145, 220, 165, 256, 185);
+    ctx.bezierCurveTo(292, 165, 317, 145, 317, 120);
+    ctx.bezierCurveTo(317, 120, 312, 95, 287, 95);
+    ctx.bezierCurveTo(272, 95, 256, 105, 256, 120);
+    ctx.fill();
+
+    // Soft frosty glow around the heart
+    ctx.fillStyle = 'rgba(254, 249, 195, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(256, 140, 65, 45, 0, 0, Math.PI * 2);
+    ctx.fill();
   } else {
     ctx.fillStyle = '#64748b';
     ctx.fillRect(0, 0, 512, 256);
@@ -407,6 +435,16 @@ export const SolarSystem3D: React.FC<SolarSystem3DProps> = ({
   const isOverviewModeRef = useRef(isOverviewMode);
   isOverviewModeRef.current = isOverviewMode;
 
+  const quickBarRef = useRef<HTMLDivElement | null>(null);
+
+  // Automatically scroll the bottom planetary bar to keep the selected body visible
+  useEffect(() => {
+    const el = document.getElementById(`planet-btn-${selectedBody.id}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [selectedBody.id]);
+
   // References for Three.js lifecycle
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -429,6 +467,7 @@ export const SolarSystem3D: React.FC<SolarSystem3DProps> = ({
     if (body.id === 'uranus' || body.id === 'neptune') return 20;
     if (body.id === 'earth') return 16;
     if (body.id === 'asteroids') return 26;
+    if (body.id === 'pluto') return 10;
     return 14;
   };
 
@@ -466,9 +505,9 @@ export const SolarSystem3D: React.FC<SolarSystem3DProps> = ({
     setIsOverviewMode(true);
     isOverviewModeRef.current = true;
     cameraTargetLookAtRef.current.set(0, 0, 0);
-    targetCameraDistanceRef.current = 140;
+    targetCameraDistanceRef.current = 200; // Overview shows out past Pluto's orbit (160)
     targetCameraPhiRef.current = 0.95;
-    setZoomLevel(140);
+    setZoomLevel(200);
   };
 
   // Update 3D Highlight Reticle, Billboard & Orbit Glow when selectedBody or lang changes
@@ -738,6 +777,15 @@ export const SolarSystem3D: React.FC<SolarSystem3DProps> = ({
         const shieldMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9, roughness: 0.1 });
         const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
         bodyGroup.add(shieldMesh);
+      }
+
+      // Pluto's companion moon Charon (famous binary dwarf system)
+      if (body.id === 'pluto') {
+        const charonGeo = new THREE.SphereGeometry(bodyRadius * 0.52, 16, 16);
+        const charonMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.85 });
+        const charonMesh = new THREE.Mesh(charonGeo, charonMat);
+        charonMesh.position.set(bodyRadius * 2.4, 0.25, 0);
+        bodyGroup.add(charonMesh);
       }
 
       // Initial angle staggered along orbit
@@ -1125,34 +1173,54 @@ export const SolarSystem3D: React.FC<SolarSystem3DProps> = ({
 
       {/* Floating Bottom Quick-Jump Planetary Bar */}
       <div className="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between gap-2 pointer-events-none">
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1.5 px-2 bg-slate-950/85 backdrop-blur-md border-2 border-slate-800 rounded-2xl max-w-full pointer-events-auto scrollbar-none">
-          {CELESTIAL_BODIES.map(b => {
-            const isSelected = selectedBody.id === b.id;
-            const isUnlocked = unlockedBadges.includes(b.id);
+        <div className="flex items-center gap-1 bg-slate-950/85 backdrop-blur-md border-2 border-slate-800 rounded-2xl p-1 pointer-events-auto max-w-[calc(100%-150px)]">
+          <button
+            onClick={() => quickBarRef.current?.scrollBy({ left: -140, behavior: 'smooth' })}
+            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+            title="Scroll Left"
+          >
+            <ChevronLeft size={14} />
+          </button>
+          <div
+            ref={quickBarRef}
+            className="flex items-center gap-1.5 overflow-x-auto py-0.5 px-1 scrollbar-none"
+          >
+            {CELESTIAL_BODIES.map(b => {
+              const isSelected = selectedBody.id === b.id;
+              const isUnlocked = unlockedBadges.includes(b.id);
 
-            return (
-              <button
-                key={b.id}
-                onClick={() => handleFocusPlanet(b)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
-                  isSelected
-                    ? 'bg-amber-400 text-slate-950 scale-105 shadow-comic ring-2 ring-amber-300 ring-offset-2 ring-offset-slate-950'
-                    : isUnlocked
-                    ? 'bg-purple-950/80 text-purple-300 hover:bg-purple-800/80 border border-purple-500/40'
-                    : 'bg-slate-900 text-slate-300 hover:bg-slate-800'
-                }`}
-                title={getName(b)}
-              >
-                <span>{b.icon}</span>
-                <span>{getName(b)}</span>
-                {isSelected && (
-                  <span className="text-[10px] bg-slate-950 text-amber-300 px-1 py-0.5 rounded font-sans font-bold">
-                    3D 🎯
-                  </span>
-                )}
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={b.id}
+                  id={`planet-btn-${b.id}`}
+                  onClick={() => handleFocusPlanet(b)}
+                  className={`px-2.5 py-1 rounded-xl text-xs font-comic font-bold transition-all whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                    isSelected
+                      ? 'bg-amber-400 text-slate-950 scale-105 shadow-comic ring-2 ring-amber-300 ring-offset-2 ring-offset-slate-950'
+                      : isUnlocked
+                      ? 'bg-purple-950/80 text-purple-300 hover:bg-purple-800/80 border border-purple-500/40'
+                      : 'bg-slate-900 text-slate-300 hover:bg-slate-800'
+                  }`}
+                  title={getName(b)}
+                >
+                  <span>{b.icon}</span>
+                  <span>{getName(b)}</span>
+                  {isSelected && (
+                    <span className="text-[10px] bg-slate-950 text-amber-300 px-1 py-0.5 rounded font-sans font-bold">
+                      3D 🎯
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <button
+            onClick={() => quickBarRef.current?.scrollBy({ left: 140, behavior: 'smooth' })}
+            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+            title="Scroll Right"
+          >
+            <ChevronRight size={14} />
+          </button>
         </div>
 
         {/* Orbit Controls buttons */}
