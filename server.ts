@@ -88,14 +88,22 @@ async function setupServer() {
   } else {
     const { createServer } = await import('vite');
     const vite = await createServer({
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        hmr: false,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   }
 
-  app.listen(port, () => {
-    console.log(`🚀 Mariner Server running at http://localhost:${port}`);
+  const serverPort = Number(port) || 3000;
+  const server = app.listen(serverPort, '0.0.0.0', () => {
+    console.log(`🚀 Mariner Server running at http://0.0.0.0:${serverPort}`);
+  });
+
+  server.on('error', (err: any) => {
+    console.error('Server listen error:', err);
   });
 }
 

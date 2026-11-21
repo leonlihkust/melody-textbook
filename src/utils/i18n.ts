@@ -3,7 +3,9 @@ export type Language = 'en' | 'fr' | 'zh';
 export interface Translations {
   nav: {
     map: string;
+    canada: string;
     world: string;
+    china: string;
     space: string;
     badges: string;
     curriculum: string;
@@ -70,6 +72,19 @@ export interface Translations {
     inspectGlobe: string;
     correctBadgeToast: (country: string, badge: string) => string;
   };
+  china: {
+    title: string;
+    subtitle: string;
+    map3D: string;
+    factCards: string;
+    funFacts: string;
+    badgeQuiz: string;
+    earned: string;
+    locked: string;
+    takeQuiz: string;
+    inspect3D: string;
+    correctBadgeToast: (city: string, badge: string) => string;
+  };
   space: {
     title: string;
     subtitle: string;
@@ -92,6 +107,8 @@ export interface Translations {
     trophySubtitle: string;
     trophyTag: string;
     vaultTitle: string;
+    canadaVaultTitle: string;
+    chinaVaultTitle: string;
     spaceVaultTitle: string;
     resetTitle: string;
     resetPrompt: string;
@@ -141,7 +158,9 @@ export const I18N: Record<Language, Translations> = {
   en: {
     nav: {
       map: 'Math Map',
+      canada: 'Canada',
       world: 'World',
+      china: 'China',
       space: 'Space',
       badges: 'Badges',
       curriculum: 'Curriculum',
@@ -208,6 +227,19 @@ export const I18N: Record<Language, Translations> = {
       inspectGlobe: 'Inspect in 3D',
       correctBadgeToast: (country, badge) => `Honor Awarded: ${country} Explorer · ${badge}!`,
     },
+    china: {
+      title: 'China Cultural Explorer',
+      subtitle: 'Journey through ancient capitals, imperial gardens, and poetic wonders!',
+      map3D: '3D China Map & Landmarks',
+      factCards: 'City Heritage',
+      funFacts: 'Ancient Secrets',
+      badgeQuiz: 'Heritage Quiz',
+      earned: 'Badge Unlocked!',
+      locked: 'Quiz to Unlock',
+      takeQuiz: 'Unlock City Badge',
+      inspect3D: 'Explore in 3D',
+      correctBadgeToast: (city, badge) => `Honor Awarded: ${city} Explorer · ${badge}!`,
+    },
     space: {
       title: 'Solar System 3D Explorer',
       subtitle: 'Journey through 14 celestial bodies, discover space science & earn cosmic badges!',
@@ -230,6 +262,8 @@ export const I18N: Record<Language, Translations> = {
       trophySubtitle: 'Interactive procedural 3D trophy! Hover and tilt to inspect in 360°.',
       trophyTag: 'WebGL · Three.js 3D',
       vaultTitle: '16 World Explorer Badges',
+      canadaVaultTitle: '7 Canada Landform Region Badges',
+      chinaVaultTitle: '12 China Cultural Heritage Badges',
       spaceVaultTitle: '14 Cosmic & Planetary Badges',
       resetTitle: 'Want to reset progress and start a fresh voyage?',
       resetPrompt: 'Reset all progress and stars?',
@@ -314,8 +348,10 @@ export const I18N: Record<Language, Translations> = {
   },
   fr: {
     nav: {
-      map: 'Carte des maths',
-      world: 'Monde 3D',
+      map: 'Maths',
+      canada: 'Canada',
+      world: 'Monde',
+      china: 'Chine',
       space: 'Espace',
       badges: 'Badges',
       curriculum: 'Programme',
@@ -382,6 +418,19 @@ export const I18N: Record<Language, Translations> = {
       inspectGlobe: 'Voir sur le Globe 3D',
       correctBadgeToast: (country, badge) => `Honneur attribué : Explorateur du ${country} · ${badge} !`,
     },
+    china: {
+      title: 'Exploration de la Chine',
+      subtitle: 'Voyagez à travers les capitales impériales, jardins de poètes et merveilles millénaires !',
+      map3D: 'Carte 3D de Chine & Monuments',
+      factCards: 'Patrimoine de la ville',
+      funFacts: 'Secrets d\'histoire',
+      badgeQuiz: 'Défi du Savoir',
+      earned: 'Badge Débloqué !',
+      locked: 'Répondez pour Débloquer',
+      takeQuiz: 'Gagner le Badge',
+      inspect3D: 'Explorer en 3D',
+      correctBadgeToast: (city, badge) => `Honneur attribué : Explorateur de ${city} · ${badge} !`,
+    },
     space: {
       title: 'Explorateur Spatial 3D',
       subtitle: 'Voyage à travers 14 corps célestes, découvre les secrets de l\'espace et gagne des badges cosmiques !',
@@ -404,6 +453,8 @@ export const I18N: Record<Language, Translations> = {
       trophySubtitle: 'Trophée 3D interactif ! Survole et incline pour admirer à 360°.',
       trophyTag: 'WebGL · Three.js 3D',
       vaultTitle: '16 Badges d\'Explorateur du Monde',
+      canadaVaultTitle: '7 Badges des Régions Physiques du Canada',
+      chinaVaultTitle: '12 Badges du Patrimoine de Chine',
       spaceVaultTitle: '14 Badges Cosmiques et Planétaires',
       resetTitle: 'Veux-tu réinitialiser ta progression et recommencer ?',
       resetPrompt: 'Réinitialiser toute la progression et les étoiles ?',
@@ -489,7 +540,9 @@ export const I18N: Record<Language, Translations> = {
   zh: {
     nav: {
       map: '航海地图',
+      canada: '加拿大地貌',
       world: '世界探索',
+      china: '中国探索',
       space: '太空探索',
       badges: '勋章金库',
       curriculum: '大纲解析',
@@ -556,6 +609,19 @@ export const I18N: Record<Language, Translations> = {
       inspectGlobe: '在 3D 地球仪中检阅',
       correctBadgeToast: (country, badge) => `荣获【${country}】专属航海探索家荣誉 · ${badge}！`,
     },
+    china: {
+      title: '华夏名城与文化大探索',
+      subtitle: '畅游千年古都、皇家园林与诗画江南，探索博大精深的中华胜景！',
+      map3D: '3D 华夏地图与名胜',
+      factCards: '名城史话',
+      funFacts: '文化冷知识',
+      badgeQuiz: '名胜答题挑战',
+      earned: '已解锁',
+      locked: '未解锁',
+      takeQuiz: '开始名胜答题',
+      inspect3D: '在 3D 华夏地图中检阅',
+      correctBadgeToast: (city, badge) => `荣获【${city}】专属名胜文化荣誉 · ${badge}！`,
+    },
     space: {
       title: '3D 太空与太阳系大探索',
       subtitle: '巡航 14 大天体与深空航天器，探索太空前沿科学，解锁专属太空勋章！',
@@ -578,6 +644,8 @@ export const I18N: Record<Language, Translations> = {
       trophySubtitle: '悬停、倾斜或点击可 360° 检阅你的专属 3D 荣誉金舵！',
       trophyTag: 'WebGL · Three.js 3D',
       vaultTitle: '16 国地理探索勋章',
+      canadaVaultTitle: '7 大加拿大地貌分区勋章',
+      chinaVaultTitle: '12 大华夏名城文化勋章',
       spaceVaultTitle: '14 大深空与行星探索勋章',
       resetTitle: '想要清空记录重新体验航海闯关吗？',
       resetPrompt: '确定要重置所有星星和通关进度吗？',

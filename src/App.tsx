@@ -6,6 +6,10 @@ import { WORLD_FRENCH_DATA } from './data/worldFrenchData';
 import { QuestMap } from './components/QuestMap';
 import { QuestionRunner } from './components/QuestionRunner';
 import { WorldExplorer } from './components/WorldExplorer';
+import { ChinaExplorer } from './components/ChinaExplorer';
+import { CHINA_CITIES } from './data/chinaData';
+import { CanadaLandformsExplorer } from './components/CanadaLandformsExplorer';
+import { CANADA_LANDFORM_REGIONS } from './data/canadaLandformsData';
 import { SpaceExplorer } from './components/SpaceExplorer';
 import { CELESTIAL_BODIES } from './data/spaceData';
 import { Scratchpad } from './components/Scratchpad';
@@ -16,7 +20,7 @@ import { playClickSound, playChestFanfare } from './utils/audio';
 import { triggerWeekVictoryConfetti, triggerBadgeUnlockConfetti } from './utils/confettiExplosion';
 import { Language, I18N } from './utils/i18n';
 
-type ActiveView = 'map' | 'runner' | 'world' | 'space' | 'badges' | 'about';
+type ActiveView = 'map' | 'runner' | 'canada' | 'world' | 'china' | 'space' | 'badges' | 'about';
 
 export default function App() {
   const allWeeks = React.useMemo(() => getAllWeeks(), []);
@@ -225,6 +229,29 @@ export default function App() {
           subtitle: toastSubtitle,
         });
         setTimeout(() => setCelebrationToast(null), 4500);
+      } else {
+        const canadaRegion = CANADA_LANDFORM_REGIONS.find(r => r.badgeId === badgeId);
+        if (canadaRegion) {
+          const toastTitle =
+            lang === 'fr'
+              ? `Nouveau Badge : ${canadaRegion.badgeTitle.fr} !`
+              : lang === 'zh'
+              ? `新勋章解锁：${canadaRegion.badgeTitle.zh}！`
+              : `New Badge: ${canadaRegion.badgeTitle.en}!`;
+          const toastSubtitle =
+            lang === 'fr'
+              ? `${canadaRegion.icon} Expert de : ${canadaRegion.name.fr}`
+              : lang === 'zh'
+              ? `${canadaRegion.icon} 掌握【${canadaRegion.name.zh}】地貌知识！`
+              : `${canadaRegion.icon} Mastered ${canadaRegion.name.en}!`;
+
+          setCelebrationToast({
+            icon: '🍁',
+            title: toastTitle,
+            subtitle: toastSubtitle,
+          });
+          setTimeout(() => setCelebrationToast(null), 4500);
+        }
       }
     }
   };
@@ -269,19 +296,33 @@ export default function App() {
         </div>
 
         {/* Zone 2: Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 font-comic text-xs font-bold text-slate-800">
+        <nav className="hidden md:flex items-center gap-4 lg:gap-5 font-comic text-xs font-bold text-slate-800">
           <button
             onClick={() => {
               if (soundEnabled) playClickSound();
               setActiveView('map');
             }}
-            className={`whitespace-nowrap transition-colors hover:text-blue-600 cursor-pointer ${
+            className={`whitespace-nowrap shrink-0 transition-colors hover:text-blue-600 cursor-pointer ${
               activeView === 'map' || activeView === 'runner'
                 ? 'text-blue-600 underline underline-offset-8 decoration-2 decoration-amber-400'
                 : ''
             }`}
           >
             {t.nav.map}
+          </button>
+
+          <button
+            onClick={() => {
+              if (soundEnabled) playClickSound();
+              setActiveView('canada');
+            }}
+            className={`whitespace-nowrap shrink-0 transition-colors hover:text-red-600 cursor-pointer ${
+              activeView === 'canada'
+                ? 'text-red-600 underline underline-offset-8 decoration-2 decoration-red-500'
+                : ''
+            }`}
+          >
+            🍁 {t.nav.canada}
           </button>
 
           <button
@@ -296,6 +337,20 @@ export default function App() {
             }`}
           >
             {t.nav.world}
+          </button>
+
+          <button
+            onClick={() => {
+              if (soundEnabled) playClickSound();
+              setActiveView('china');
+            }}
+            className={`whitespace-nowrap transition-colors hover:text-blue-600 cursor-pointer ${
+              activeView === 'china'
+                ? 'text-blue-600 underline underline-offset-8 decoration-2 decoration-amber-400'
+                : ''
+            }`}
+          >
+            {t.nav.china}
           </button>
 
           <button
@@ -427,22 +482,34 @@ export default function App() {
       </header>
 
       {/* Mobile Sub-Navigation Bar */}
-      <div className="md:hidden flex items-center justify-around bg-white border-b-2 border-slate-900 px-2 py-2 text-xs font-comic font-bold text-slate-700">
+      <div className="md:hidden flex items-center justify-around bg-white border-b-2 border-slate-900 px-2 py-2 text-xs font-comic font-bold text-slate-700 overflow-x-auto scrollbar-none gap-1">
         <button
           onClick={() => setActiveView('map')}
-          className={`px-2 py-1 rounded-lg cursor-pointer ${activeView === 'map' ? 'bg-amber-300 text-slate-900' : ''}`}
+          className={`px-2 py-1 rounded-lg whitespace-nowrap cursor-pointer ${activeView === 'map' ? 'bg-amber-300 text-slate-900' : ''}`}
         >
           {t.nav.map}
         </button>
         <button
+          onClick={() => setActiveView('canada')}
+          className={`px-2 py-1 rounded-lg whitespace-nowrap cursor-pointer ${activeView === 'canada' ? 'bg-red-500 text-white' : ''}`}
+        >
+          🍁 {t.nav.canada}
+        </button>
+        <button
           onClick={() => setActiveView('world')}
-          className={`px-2 py-1 rounded-lg cursor-pointer ${activeView === 'world' ? 'bg-amber-300 text-slate-900' : ''}`}
+          className={`px-2 py-1 rounded-lg whitespace-nowrap cursor-pointer ${activeView === 'world' ? 'bg-amber-300 text-slate-900' : ''}`}
         >
           {t.nav.world}
         </button>
         <button
+          onClick={() => setActiveView('china')}
+          className={`px-2 py-1 rounded-lg whitespace-nowrap cursor-pointer ${activeView === 'china' ? 'bg-amber-300 text-slate-900' : ''}`}
+        >
+          {t.nav.china}
+        </button>
+        <button
           onClick={() => setActiveView('space')}
-          className={`px-2 py-1 rounded-lg cursor-pointer ${activeView === 'space' ? 'bg-amber-300 text-slate-900' : ''}`}
+          className={`px-2 py-1 rounded-lg whitespace-nowrap cursor-pointer ${activeView === 'space' ? 'bg-amber-300 text-slate-900' : ''}`}
         >
           {t.nav.space}
         </button>
@@ -493,8 +560,26 @@ export default function App() {
           />
         )}
 
+        {activeView === 'canada' && (
+          <CanadaLandformsExplorer
+            lang={lang}
+            soundEnabled={soundEnabled}
+            unlockedBadges={unlockedBadges}
+            onUnlockBadge={handleUnlockBadge}
+          />
+        )}
+
         {activeView === 'world' && (
           <WorldExplorer
+            lang={lang}
+            soundEnabled={soundEnabled}
+            unlockedBadges={unlockedBadges}
+            onUnlockBadge={handleUnlockBadge}
+          />
+        )}
+
+        {activeView === 'china' && (
+          <ChinaExplorer
             lang={lang}
             soundEnabled={soundEnabled}
             unlockedBadges={unlockedBadges}
@@ -608,6 +693,109 @@ export default function App() {
                         <span className="text-2xl">{country.flag}</span>
                         {isUnlocked ? (
                           <span className="text-xs text-emerald-600 font-bold">{t.badges.badgeEarnedTag}</span>
+                        ) : (
+                          <span className="text-xs text-slate-400">{t.badges.badgeLockedTag}</span>
+                        )}
+                      </div>
+                      <div className="font-comic text-xs font-bold text-slate-900 leading-tight">
+                        {bTitle}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                        {cName}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Canada Landform Regions Badges Showcase */}
+            <div className="bg-white comic-box rounded-3xl p-6 mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-comic text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <span>🍁</span>
+                  <span>{t.badges.canadaVaultTitle}</span>
+                </h2>
+                <span className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-lg tabular-nums">
+                  {unlockedBadges.filter(id => CANADA_LANDFORM_REGIONS.some(r => r.badgeId === id)).length} / {CANADA_LANDFORM_REGIONS.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                {CANADA_LANDFORM_REGIONS.map(region => {
+                  const isUnlocked = unlockedBadges.includes(region.badgeId);
+                  return (
+                    <div
+                      key={region.id}
+                      onClick={() => {
+                        if (isUnlocked) {
+                          if (soundEnabled) playClickSound();
+                          triggerBadgeUnlockConfetti();
+                        }
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 transition-all ${
+                        isUnlocked
+                          ? 'border-red-400 bg-red-50/70 shadow-sm cursor-pointer hover:scale-105 active:scale-95'
+                          : 'border-slate-200 bg-slate-50 opacity-60'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-2xl">{region.icon}</span>
+                        {isUnlocked ? (
+                          <span className="text-xs text-red-700 font-bold">{t.badges.badgeEarnedTag}</span>
+                        ) : (
+                          <span className="text-xs text-slate-400">{t.badges.badgeLockedTag}</span>
+                        )}
+                      </div>
+                      <div className="font-comic text-xs font-bold text-slate-900 leading-tight">
+                        {region.badgeTitle[lang]}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                        {region.shortName[lang]}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* China Heritage Badges Showcase */}
+            <div className="bg-white comic-box rounded-3xl p-6 mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-comic text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <span>🏮</span>
+                  <span>{t.badges.chinaVaultTitle}</span>
+                </h2>
+                <span className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-lg">
+                  {unlockedBadges.filter(id => CHINA_CITIES.some(c => c.id === id)).length} / {CHINA_CITIES.length}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                {CHINA_CITIES.map(city => {
+                  const isUnlocked = unlockedBadges.includes(city.id);
+                  const bTitle = lang === 'fr' ? city.badgeTitleFr : lang === 'zh' ? city.badgeTitleZh : city.badgeTitleEn;
+                  const cName = lang === 'fr' ? city.nameFr : lang === 'zh' ? city.nameZh : city.nameEn;
+
+                  return (
+                    <div
+                      key={city.id}
+                      onClick={() => {
+                        if (isUnlocked) {
+                          if (soundEnabled) playClickSound();
+                          triggerBadgeUnlockConfetti();
+                        }
+                      }}
+                      className={`p-3.5 rounded-2xl border-2 transition-all ${
+                        isUnlocked
+                          ? 'border-red-400 bg-red-50/70 shadow-sm cursor-pointer hover:scale-105 active:scale-95'
+                          : 'border-slate-200 bg-slate-50 opacity-60'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-2xl">{city.icon}</span>
+                        {isUnlocked ? (
+                          <span className="text-xs text-red-700 font-bold">{t.badges.badgeEarnedTag}</span>
                         ) : (
                           <span className="text-xs text-slate-400">{t.badges.badgeLockedTag}</span>
                         )}
@@ -805,7 +993,9 @@ export default function App() {
         lang={lang}
         soundEnabled={soundEnabled}
         currentContext={
-          selectedWeek
+          activeView === 'canada'
+            ? 'Grade 3/4 Social Studies: 7 Canadian Landform Regions (Les régions physiques du Canada) — Map, Relief, Climate, Vegetation, Jobs'
+            : selectedWeek
             ? `Grade 4 Math - Week ${selectedWeek.week}: ${selectedWeek.titleEn} (${selectedWeek.strandEn}) at ${selectedWeek.landmark}`
             : 'Grade 4 WRDSB Math Adventure'
         }
